@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>IUR Test System</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+    
+  .carousel-inner img {
+      width: 100%; /* Set width to 100% */
+      margin: auto;
+      min-height:200px;
+  }
+
+  .th 
+
+  /* Hide the carousel text when the screen is less than 600 pixels wide */
+  @media (max-width: 600px) {
+    .carousel-caption {
+      display: none; 
+    }
+  }
+
+    .jumbotron {
+      padding: 50px 50px 50px 20px;
+    }
+
+
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="/b_d_request/send_request/">Send Dash Request</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="/index">Home</a></li>
+        <li><a href="/units/list">Units</a></li>
+        <li><a href="/units/checkin">Units CheckIn</a></li>
+        <li><a href="/units/borrow">Search & Borrow</a></li>
+        <li class="active"><a href="/b_d_request/send_request">Send Dash Request</a></li>
+        <li><a href="/b_d_request/list">Dash Request List</a></li>
+        <li><a href="#">Send Email</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container" style="margin: 10px">
+          <div class="modal fade" id="fjFilterModal">
+            <form type="text" action="/b_d_request/send_request" method='post' style="margin:0" id="request_form">
+        {% csrf_token %}
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">B & D Request</h5>
+                </div>
+                <div class="modal-body">
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Fill in Date</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <input class="form-control" name="fill_in_datetime" id="fill_in_datetime" value="">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Applicant's Email Address</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <input class=form-control name="applicant_email" id="applicant_email" type="email" placeholder="ex. example@hp.com" step=1 min=0>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Department</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <div class="input-group dropdown">
+                              <input type="text" class="form-control dropdown-toggle department" value="" placeholder="Commodity" style="border-radius: 0px" name="department" id="department">
+                              <ul class="dropdown-menu">
+                                <li><a href="#" data-value="Commodity">Commodity</a></li>
+                                <li><a href="#" data-value="Platform Technology">Platform Technology</a></li>
+                                <li><a href="#" data-value="SEPM">SEPM</a></li>
+                                <li><a href="#" data-value="Graphics">Graphics</a></li>
+                                <li><a href="#" data-value="Device Enabling">Device Enabling</a></li>
+                                <li><a href="#" data-value="BIOS & EC Team">BIOS & EC Team</a></li>
+                                <li><a href="#" data-value="EE">EE</a></li>
+                                <li><a href="#" data-value="ME">ME</a></li>
+                                <li><a href="#" data-value="PE">PE</a></li>
+                                <li><a href="#" data-value="PDM">PDM</a></li>
+                                <li><a href="#" data-value="Validation NB SCIT TPM">Validation NB SCIT TPM</a></li>
+                                <li><a href="#" data-value="Audio/Camera/Performance">Audio/Camera/Performance</a></li>
+                                <li><a href="#" data-value="OS Team">OS Team</a></li>
+                                <li><a href="#" data-value="Communications Tech">Communications Tech</a></li>
+                                <li><a href="#" data-value="System Manager">System Manager</a></li>
+                                <li><a href="#" data-value="Accessory Team">Accessory Team</a></li>
+                                <li><a href="#" data-value="Others">Others</a></li>
+                              </ul>
+                              <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Project Name</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <div class="input-group dropdown">
+                              <input type="text" class="form-control dropdown-toggle project_name" value="" placeholder="Bumblebee 1.0 (EliteBook 1030 G3)" style="border-radius: 0px" name="project_name" id="project_name">
+                              <ul class="dropdown-menu">
+                                <li><a href="#" data-value="Bumblebee 1.0 (EliteBook 1030 G3)">Bumblebee 1.0 (EliteBook 1030 G3)</a></li>
+                                <li><a href="#" data-value="Megatron 1.0 (1013 G3)">Megatron 1.0 (1013 G3)</a></li>
+                                <li><a href="#" data-value="Computron 14/14W/15 (840/z14u/850 G5)">Computron 14/14W/15 (840/z14u/850 G5)</a></li>
+                                <li><a href="#" data-value="Zigzag 1.0 (zBookS15 G5)">Zigzag 1.0 (zBookS15 G5)</a></li>
+                              </ul>
+                              <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Phase</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <div class="input-group dropdown">
+                              <input type="text" class="form-control dropdown-toggle phase" value="" placeholder="SI1" style="border-radius: 0px" name="phase" id="phase">
+                              <ul class="dropdown-menu">
+                                <li><a href="#" data-value="SI1">SI1</a></li>
+                                <li><a href="#" data-value="SI2">SI2</a></li>
+                                <li><a href="#" data-value="PV">PV</a></li>
+                                <li><a href="#" data-value="MV">MV</a></li>
+                              </ul>
+                              <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">BIOS Version</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <div class="input-group dropdown">
+                              <input type="text" class="form-control dropdown-toggle bios_version" value="" placeholder="No need" style="border-radius: 0px" name="bios_version" id="bios_version">
+                              <ul class="dropdown-menu">
+                                <li><a href="#" data-value="No need">No need</a></li>
+                                <li><a href="#" data-value="Latest">Latest</a></li>
+                                <li><a href="#" data-value="">Fill In by yourself</a></li>
+                              </ul>
+                              <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">OS</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <div class="input-group dropdown">
+                              <input type="text" class="form-control dropdown-toggle os" value="" placeholder="Windows10, 32bit" style="border-radius: 0px" id="OS" name="OS">
+                              <ul class="dropdown-menu">
+                                <li><a href="#" data-value="Windows10, 32bit">Windows10, 32bit</a></li>
+                                <li><a href="#" data-value="Windows10, 64bit">Windows10, 64bit</a></li>
+                                <li><a href="#" data-value="Windows8, 32bit">Windows8, 32bit</a></li>
+                                <li><a href="#" data-value="Windows8, 64bit">Windows8, 64bit</a></li>
+                                <li><a href="#" data-value="Windows7, 32bit">Windows8, 32bit</a></li>
+                                <li><a href="#" data-value="Windows7, 64bit">Windows8, 64bit</a></li>
+                              </ul>
+                              <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Language</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <div class="input-group dropdown">
+                              <input type="text" class="form-control dropdown-toggle language" value="" placeholder="US#ABA 英文" style="border-radius: 0px" id="language" name="language">
+                              <ul class="dropdown-menu">
+                                <li><a href="#" data-value="US#ABA 英文">US#ABA 英文</a></li>
+                                <li><a href="#" data-value="TW#AB0 繁體中文">TW#AB0 繁體中文</a></li>
+                              </ul>
+                              <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Issue</label>
+                    <div class=col-md-12>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <input class=form-control name="issue" id="issue" type="text" placeholder="ex. Cannot open the unit" step=1 min=0>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary" id="send_borrow_request">Send Request</button>
+                </div>
+              </div>
+            </div>
+            </form>
+          </div>
+          <input type="button" class="btn" data-toggle="modal" data-target="#fjFilterModal" value="B & D Request" id="submit_borrow" onclick="onclick_B_D_Request();" />
+        
+    </div>
+
+</body>
+
+
+<script type="text/javascript">
+  function onclick_B_D_Request(){
+    document.getElementById("fill_in_datetime").value = new Date().toLocaleString();
+    console.log(new Date().toLocaleString());
+  }
+  
+
+  $(function() {
+  $('.dropdown-menu a').click(function() {
+    $(this).closest('.dropdown').find('input.department')
+      .val( $(this).attr('data-value'));
+  });
+});
+
+  $(function() {
+  $('.dropdown-menu a').click(function() {
+    $(this).closest('.dropdown').find('input.project_name')
+      .val( $(this).attr('data-value'));
+  });
+});
+
+  $(function() {
+  $('.dropdown-menu a').click(function() {
+    $(this).closest('.dropdown').find('input.phase')
+      .val( $(this).attr('data-value'));
+  });
+});
+
+  $(function() {
+  $('.dropdown-menu a').click(function() {
+    $(this).closest('.dropdown').find('input.bios_version')
+      .val( $(this).attr('data-value'));
+  });
+});
+
+  $(function() {
+  $('.dropdown-menu a').click(function() {
+    $(this).closest('.dropdown').find('input.os')
+      .val( $(this).attr('data-value'));
+  });
+});
+
+  $(function() {
+  $('.dropdown-menu a').click(function() {
+    $(this).closest('.dropdown').find('input.language')
+      .val( $(this).attr('data-value'));
+  });
+});
+</script>
+</html>

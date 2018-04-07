@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>IUR Test System</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+    
+  .carousel-inner img {
+      width: 100%; /* Set width to 100% */
+      margin: auto;
+      min-height:200px;
+  }
+
+  .th 
+
+  /* Hide the carousel text when the screen is less than 600 pixels wide */
+  @media (max-width: 600px) {
+    .carousel-caption {
+      display: none; 
+    }
+  }
+
+    .jumbotron {
+      padding: 50px 50px 50px 20px;
+    }
+
+
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="/units/list/">Units List</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="/index">Home</a></li>
+        <li class="active"><a href="/units/list">Units</a></li>
+        <li><a href="/units/checkin">Units CheckIn</a></li>
+        <li><a href="/units/borrow">Search & Borrow</a></li>
+        <li><a href="/b_d_request/send_request">Send Dash Request</a></li>
+        <li><a href="/b_d_request/list">Dash Request List</a></li>
+        <li><a href="#">Send Email</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-md-12">
+          <canvas id="myChart" width="800" height="400" style="margin: 50px"></canvas>
+          <canvas id="platform_distributionChart" width="800" height="1600" style="margin: 30px"></canvas>
+          <p>
+            <button type="button" class="btn btn-primary" style="margin-top: 10px" onclick="onclickTotal()">Total</button>
+            <button type="button" class="btn btn-primary" style="margin-top: 10px" onclick="onclickBorrowed()">Borrowed</button>
+            <button type="button" class="btn btn-primary" style="margin-top: 10px" onclick="onclickAvailable()">Avaliable</button>
+          </p>
+          <table class="table table-condensed table-hover table-striped" width="647" id="units_list">
+            <thead>
+              <tr id="units_list_title_bar" style="display: none">
+                <th>#</th>
+                <th>Move in Date</th>
+                <th>Owner</th>
+                <th>Core Team</th>
+                <th>Platform</th>
+                <th>Phase</th>
+                <th>SKU</th>
+                <th>CAT No.</th>
+                <th>S/N</th>
+                <th>Comment</th>
+                <th>Status</th>
+                <th id="th_borrow_date" style="visibility: hidden;">Borrow Date</th>
+                <th id="th_borrow_purpose" style="visibility: hidden;">Borrow Purpose</th>
+                <th id="th_borrow_return" style="visibility: hidden;">Return</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+
+</tbody>
+</table>
+        </div>
+</div>
+
+<div class="container">
+  <div class="modal fade" id="fjFilterModal">
+            <form type="text" action="/units/list/" method='post' style="margin:0px" id="borrow_form">
+            {% csrf_token %}
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Borrow Units</h5>
+                </div>
+                <div class="modal-body">
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Person</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <input class=form-control name="borrow_person" id="borrow_person" type="text" placeholder="ex. John" step=1 min=0>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">CAT Number</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon>#</span>
+                            <input class=form-control name="borrow_cat" id="borrow_cat" type="text" placeholder="ex. CAT000270769" step=1 min=0>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Borrow Date</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <input class="form-control" type="text" name="borrow_date" id="borrow_date">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Purpose</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <input class=form-control name="borrow_purpose" id="borrow_purpose" type="text" min=0 placeholder="ex. Validation">
+                            <span class=input-group-addon></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary send_borrow_request" id="send_borrow_request">Send Borrow Requests</button>
+                </div>
+              </div>
+            </div>
+            </form>
+          </div>
+</div>
+</body>
+<script type="text/javascript">
+
+  function getCookie(name) {  
+    var cookieValue = null;  
+    if (document.cookie && document.cookie != '') {  
+        var cookies = document.cookie.split(';');  
+        for (var i = 0; i < cookies.length; i++) {  
+            var cookie = jQuery.trim(cookies[i]);  
+            // Does this cookie string begin with the name we want?  
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {  
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));  
+                break;  
+            }  
+        }  
+    }  
+    return cookieValue;  
+}  
+  
+function csrfSafeMethod(method) {  
+    // these HTTP methods do not require CSRF protection  
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));  
+}  
+$.ajaxSetup({  
+    beforeSend: function(xhr, settings) {  
+    var csrftoken = getCookie('csrftoken');       
+    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {  
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);  
+        }  
+    }  
+});
+
+
+  $("body").on("click", ".borrow_btn", function () {
+        document.getElementById("borrow_date").value = new Date().toLocaleString();
+        document.getElementById("borrow_cat").value = $(this).closest("tr").find("td:eq(7)").text();
+    });
+
+  $("body").on("click", ".send_borrow_request", function () {
+        $(location).attr('href', '/units/list/');
+
+       $.get( "/units/list/", function() {
+      })
+    });
+
+  $("body").on("click", ".return_btn", function () {
+       $.post("/units/list/",
+        {
+          return_no: $(this).closest("tr").find("td:eq(7)").text(),
+        },
+        function(data,status){
+            
+        });
+       $(location).attr('href', '/units/list/');
+
+       $.get( "/units/list/", function() {
+      })
+    });
+
+
+  var uList = JSON.parse("{{list_data|escapejs}}");
+  console.log(uList.length);
+  var tableRef = document.getElementById('units_list').getElementsByTagName('tbody')[0];
+
+  var numOfTotalUnits = uList.length;
+  var numOfBorrowedUnits = 0;
+  var numOfAvailableUnits = 0;
+
+  for (var idx = 0; idx<uList.length; idx++){
+    if(uList[idx].status == "Borrowed"){
+      numOfBorrowedUnits++;
+    }
+    else if(uList[idx].status == "In Pool"){
+      numOfAvailableUnits++;
+    }
+  
+  }
+
+
+
+
+  
+  function onclickTotal(){
+    document.getElementById('units_list_title_bar').style.display="";
+    var Table = document.getElementById('units_list');
+    var tableRows = Table.getElementsByTagName('tr');
+    var RowCounts = tableRows.length; 
+    console.log(RowCounts);
+    for (var x=RowCounts-1; x>0; x--){
+      Table.deleteRow(x)
+    }    
+
+    if(document.getElementById('th_borrow_return').style.visibility="visible"){
+        document.getElementById('th_borrow_return').style.visibility="hidden";
+    }
+
+    if(document.getElementById('th_borrow_date').style.visibility="visible"){
+        document.getElementById('th_borrow_date').style.visibility="hidden";
+    }
+
+    if(document.getElementById('th_borrow_purpose').style.visibility="visible"){
+        document.getElementById('th_borrow_purpose').style.visibility="hidden";
+    }
+
+    for (var idx = 0; idx<uList.length; idx++){
+        var newRow   = tableRef.insertRow(tableRef.rows.length);
+        for (var i = 0; i < 11; i++){
+            var newCell = newRow.insertCell(i);
+            var newText;
+            switch(i){
+              case 0:
+                  newText = document.createTextNode(idx);
+                  break;
+              case 1:
+                  newText = document.createTextNode(uList[idx].move_in_date);
+                  break;
+              case 2:
+                  newText = document.createTextNode(uList[idx].owner);
+                  break;
+              case 3:
+                  newText = document.createTextNode(uList[idx].core_team);
+                  break;
+              case 4:
+                  newText = document.createTextNode(uList[idx].platform);
+                  break;
+              case 5:
+                  newText = document.createTextNode(uList[idx].phase);
+                  break;
+              case 6:
+                  newText = document.createTextNode(uList[idx].sku);
+                  break;
+              case 7:
+                  newText = document.createTextNode(uList[idx].cat_no);
+                  break;
+              case 8:
+                  newText = document.createTextNode(uList[idx].s_n);
+                  break;
+              case 9:
+                  newText = document.createTextNode(uList[idx].comment);
+                  break;
+              case 10:
+                  if(uList[idx].status=="In Pool"){
+                    newText = document.createElement('button');
+                    newText.className="btn btn-info borrow_btn";
+                    newText.setAttribute("data-toggle","modal");
+                    newText.setAttribute("data-target","#fjFilterModal");
+                    newText.innerHTML = "Borrow";
+                    newText.id = "submit_borrow";
+                  }else{
+                    newText = document.createElement('button');
+                    newText.className="btn btn-danger borrow_btn";
+                    newText.innerHTML = "Soldout";
+                  }
+                  break;
+              default:
+                  break;
+            }
+            newCell.appendChild(newText);  
+        }
+    }
+  }
+
+  function onclickBorrowed(){
+
+    if(document.getElementById('th_borrow_return').style.visibility="hidden"){
+        document.getElementById('th_borrow_return').style.visibility="visible";
+    }
+
+    if(document.getElementById('th_borrow_date').style.visibility="hidden"){
+        document.getElementById('th_borrow_date').style.visibility="visible";
+    }
+
+
+    if(document.getElementById('th_borrow_purpose').style.visibility="hidden"){
+        document.getElementById('th_borrow_purpose').style.visibility="visible";
+    }
+
+    document.getElementById('units_list_title_bar').style.display="";
+    var Table = document.getElementById('units_list');
+    var tableRows = Table.getElementsByTagName('tr');
+    var RowCounts = tableRows.length; 
+    for (var x=RowCounts-1; x>0; x--){
+      Table.deleteRow(x)
+    }
+
+
+/*
+    var tr = Table.tHead.children[0],
+    th = document.createElement('th');
+    th.innerHTML = "Borrow Date";
+    tr.appendChild(th);
+
+    var th_2 = document.createElement('th');
+    th_2.innerHTML = "Borrow Purpose";
+    tr.appendChild(th_2);
+*/
+
+    var counter = 0;
+    for (var idx = 0; idx<uList.length; idx++){
+        if(uList[idx].status == "Borrowed"){
+              var newRow   = tableRef.insertRow(tableRef.rows.length);
+              for (var i = 0; i < 14; i++){
+                  var newCell = newRow.insertCell(i);
+                  var newText;
+
+                  switch(i){
+                    case 0:
+                        newText = document.createTextNode(counter);
+                        break;
+                    case 1:
+                        newText = document.createTextNode(uList[idx].move_in_date);
+                        break;
+                    case 2:
+                        newText = document.createTextNode(uList[idx].owner);
+                        break;
+                    case 3:
+                        newText = document.createTextNode(uList[idx].core_team);
+                        break;
+                    case 4:
+                        newText = document.createTextNode(uList[idx].platform);
+                        break;
+                    case 5:
+                        newText = document.createTextNode(uList[idx].phase);
+                        break;
+                    case 6:
+                        newText = document.createTextNode(uList[idx].sku);
+                        break;
+                    case 7:
+                        newText = document.createTextNode(uList[idx].cat_no);
+                        break;
+                    case 8:
+                        newText = document.createTextNode(uList[idx].s_n);
+                        break;
+                    case 9:
+                        newText = document.createTextNode(uList[idx].comment);
+                        break;
+                    case 10:
+                        newText = document.createElement('button');
+                        newText.className="btn btn-danger borrow_btn";
+                        newText.innerHTML = "Borrowed";
+                        break;
+                    case 11:
+                        newText = document.createTextNode(uList[idx].borrow_date);
+                        break;
+                    case 12:
+                        newText = document.createTextNode(uList[idx].borrow_purpose);
+                        break;
+                    case 13:
+                        newText = document.createElement('button');
+                        newText.className="btn btn-success return_btn";
+                        newText.innerHTML = "Return";
+                        break;
+                    default:
+                        break;
+                  }
+                  newCell.appendChild(newText);  
+              }
+              counter++;
+        }
+        
+    }
+  }
+
+
+  function onclickAvailable(){
+    document.getElementById('units_list_title_bar').style.display="";
+    var Table = document.getElementById('units_list');
+    var tableRows = Table.getElementsByTagName('tr');
+    var RowCounts = tableRows.length; 
+
+    for (var x=RowCounts-1; x>0; x--){
+      Table.deleteRow(x)
+    }
+
+    if(document.getElementById('th_borrow_return').style.visibility="visible"){
+        document.getElementById('th_borrow_return').style.visibility="hidden";
+    }
+
+    if(document.getElementById('th_borrow_date').style.visibility="visible"){
+        document.getElementById('th_borrow_date').style.visibility="hidden";
+    }
+
+    if(document.getElementById('th_borrow_purpose').style.visibility="visible"){
+        document.getElementById('th_borrow_purpose').style.visibility="hidden";
+    }
+
+    var counter = 0;
+    for (var idx = 0; idx<uList.length; idx++){
+        if(uList[idx].status == "In Pool"){
+              var newRow   = tableRef.insertRow(tableRef.rows.length);
+              for (var i = 0; i < 11; i++){
+                  var newCell = newRow.insertCell(i);
+                  var newText;
+                  switch(i){
+                    case 0:
+                        newText = document.createTextNode(counter);
+                        break;
+                    case 1:
+                        newText = document.createTextNode(uList[idx].move_in_date);
+                        break;
+                    case 2:
+                        newText = document.createTextNode(uList[idx].owner);
+                        break;
+                    case 3:
+                        newText = document.createTextNode(uList[idx].core_team);
+                        break;
+                    case 4:
+                        newText = document.createTextNode(uList[idx].platform);
+                        break;
+                    case 5:
+                        newText = document.createTextNode(uList[idx].phase);
+                        break;
+                    case 6:
+                        newText = document.createTextNode(uList[idx].sku);
+                        break;
+                    case 7:
+                        newText = document.createTextNode(uList[idx].cat_no);
+                        break;
+                    case 8:
+                        newText = document.createTextNode(uList[idx].s_n);
+                        break;
+                    case 9:
+                        newText = document.createTextNode(uList[idx].comment);
+                        break;
+                    case 10:
+                        newText = document.createElement('button');
+                        newText.className="btn btn-info borrow_btn";
+                        newText.setAttribute("data-toggle","modal");
+                        newText.setAttribute("data-target","#fjFilterModal");
+                        newText.innerHTML = "Borrow";
+                        newText.id = "submit_borrow";
+                        break;
+                    default:
+                        break;
+                  }
+                  newCell.appendChild(newText);  
+              }
+              counter++;
+        }
+        
+    }
+  }
+  var ctx = document.getElementById("myChart").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+          labels: ["Borrowed", "Avaliable"],
+          datasets: [{
+              label: '# of Units',
+              data: [numOfBorrowedUnits, numOfAvailableUnits],
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+              ],
+              borderColor: [
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(153, 102, 255, 1)',                  
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          responsive: false,
+          maintainAspectRatio: false,
+          title: {
+            display: true,
+            text: 'Distribution Chart',
+            fontStyle: 'bold',
+            fontSize: 20,
+            padding: 10,
+            position: 'left',
+        }
+      }
+  });
+
+
+  var uniquePlatforms = [];
+  var noOfPlatforms = [];
+  for (var i =0; i<uList.length;i++){
+    if(uList[i].platform!==""){
+      if(uniquePlatforms.indexOf(uList[i].platform) === -1){
+         uniquePlatforms.push(uList[i].platform);
+         noOfPlatforms.push(1);
+      }
+      else{
+         noOfPlatforms[uniquePlatforms.indexOf(uList[i].platform)] = noOfPlatforms[uniquePlatforms.indexOf(uList[i].platform)] +1;
+      }
+    }
+    
+  }
+  console.log(uniquePlatforms);
+  console.log(noOfPlatforms);
+
+  var disrtribution_bg_color = [];
+  var disrtribution_bo_color = [];
+
+
+  for(var j=0; j<uniquePlatforms.length; j++){
+      disrtribution_bg_color.push('rgba(54, 162, 235, 0.2)');
+      disrtribution_bo_color.push('rgba(54, 162, 235, 1)');
+  }
+  
+  var ctx2 = document.getElementById("platform_distributionChart").getContext('2d');
+  var myChart = new Chart(ctx2, {
+      type: 'horizontalBar',
+      data: {
+          labels: uniquePlatforms,
+          datasets: [{
+              label: '# of Units',
+              data: noOfPlatforms,
+              backgroundColor: disrtribution_bg_color,
+              borderColor: disrtribution_bo_color,
+              borderWidth: 1
+          }]
+      },
+      options: {
+          responsive: false,
+          maintainAspectRatio: false,
+          title: {
+            display: true,
+            text: 'Distribution Chart',
+            fontStyle: 'bold',
+            fontSize: 20,
+            padding: 10,
+            position: 'left',
+        }
+      }
+  });
+  
+</script>
+</html>

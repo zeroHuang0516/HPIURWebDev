@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>IUR Test System</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+    
+  .carousel-inner img {
+      width: 100%; /* Set width to 100% */
+      margin: auto;
+      min-height:200px;
+  }
+
+  .th 
+
+  /* Hide the carousel text when the screen is less than 600 pixels wide */
+  @media (max-width: 600px) {
+    .carousel-caption {
+      display: none; 
+    }
+  }
+
+    .jumbotron {
+      padding: 50px 50px 50px 20px;
+    }
+
+  /* The container */
+.check_container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.check_container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.check_container:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.check_container input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.check_container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.check_container .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 8px;
+    height: 15px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="/b_d_request/list/">Dash Request List</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="/index">Home</a></li>
+        <li><a href="/units/list">Units</a></li>
+        <li><a href="/units/checkin">Units CheckIn</a></li>
+        <li><a href="/units/borrow">Search & Borrow</a></li>
+        <li><a href="/b_d_request/send_request">Send Dash Request</a></li>
+        <li class="active"><a href="/b_d_request/list">Dash Request List</a></li>
+        <li><a href="#">Send Email</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-md-12">
+          <table class="table table-condensed table-hover table-striped" width="647" id="units_list" style="margin-top: 10px">
+            <thead>
+              <tr id="units_list_title_bar" style="display: none">
+                <th>#</th>
+                <th>Pick Up</th>
+                <th>Fill in Datetime</th>
+                <th>Applicant's Email</th>
+                <th>Department</th>
+                <th>Project Name</th>
+                <th>Phase</th>
+                <th>BIOS Version</th>
+                <th>OS</th>
+                <th>Language</th>
+                <th>Issue</th>
+                <th>Status</th>
+                <th></th>
+                <th></th>
+                <th>Upgrade</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+
+</tbody>
+</table>
+        </div>
+</div>
+</body>
+<script type="text/javascript">
+  function getCookie(name) {  
+    var cookieValue = null;  
+    if (document.cookie && document.cookie != '') {  
+        var cookies = document.cookie.split(';');  
+        for (var i = 0; i < cookies.length; i++) {  
+            var cookie = jQuery.trim(cookies[i]);  
+            // Does this cookie string begin with the name we want?  
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {  
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));  
+                break;  
+            }  
+        }  
+    }  
+    return cookieValue;  
+}  
+  
+function csrfSafeMethod(method) {  
+    // these HTTP methods do not require CSRF protection  
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));  
+}  
+$.ajaxSetup({  
+    beforeSend: function(xhr, settings) {  
+    var csrftoken = getCookie('csrftoken');       
+    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {  
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);  
+        }  
+    }  
+});
+
+  $("body").on("click", ".fail", function () {
+        if($(this).closest("tr").css("background-color") != "rgba(235, 0, 0, 0.5)"){
+          $(this).closest("tr").css("background-color","rgba(235, 0, 0, 0.5)");
+        }
+        else{
+          $(this).closest("tr").css("background-color","");
+        }
+    });
+
+  $("body").on("click", ".in_progress", function () {
+        if($(this).closest("tr").css("background-color") != "rgba(54, 162, 235, 0.2)"){
+          $(this).closest("tr").css("background-color","rgba(54, 162, 235, 0.2)");
+        }
+        else{
+          $(this).closest("tr").css("background-color","");
+        }
+    });
+
+  $("body").on("click", ".completed", function () {
+        if($(this).closest("tr").css("background-color") != "rgba(255, 206, 86, 0.5)"){
+          $(this).closest("tr").css("background-color","rgba(255, 206, 86, 0.5)");
+        }
+        else{
+          $(this).closest("tr").css("background-color","");
+        }
+    });
+
+  $("body").on("click", ".remove", function () {
+         $.post("/b_d_request/list/",
+        {
+          fill_in_datetime: $(this).closest("tr").find("td:eq(2)").text(),
+        },
+        function(data,status){
+            
+        });
+        $(this).closest("tr").remove();
+    });
+
+  $("body").on("click", ".check_input", function () {
+        if($(this).is(":checked")){
+          $(this).closest("tr").css("text-decoration","line-through");
+          $(this).closest("tr").css("background-color","rgba(107, 107, 107, 0.5)");
+        }
+        else{
+          $(this).closest("tr").css("text-decoration","");
+          $(this).closest("tr").css("background-color","");
+        }
+    });
+
+  var uList = JSON.parse("{{list_data|escapejs}}");
+  console.log(uList);
+  var tableRef = document.getElementById('units_list').getElementsByTagName('tbody')[0];
+
+  var numOfTotalUnits = uList.length;
+  var numOfBorrowedUnits = 0;
+  var numOfAvailableUnits = 0;
+  
+
+    document.getElementById('units_list_title_bar').style.display="";
+    var Table = document.getElementById('units_list');
+    var tableRows = Table.getElementsByTagName('tr');
+    var RowCounts = tableRows.length; 
+    console.log(RowCounts);
+    for (var x=RowCounts-1; x>0; x--){
+      Table.deleteRow(x)
+    }
+
+
+    for (var idx = 0; idx<uList.length; idx++){
+        if(uList[idx].status == "Not YET"){
+            var newRow   = tableRef.insertRow(tableRef.rows.length);
+            for (var i = 0; i < 15; i++){
+                var newCell = newRow.insertCell(i);
+                var newText;
+                switch(i){
+                  case 0:
+                      newText = document.createTextNode(idx);
+                      break;
+                  case 1:
+                      newText = document.createElement('label');
+                      newText.className = "check_container";
+                      newInput = document.createElement('input');
+                      newInput.type="checkbox";
+                      newInput.checked="";
+                      newInput.className = "check_input";
+                      newSpan = document.createElement('checkmark');
+                      newSpan.className = "checkmark";
+                      newText.appendChild(newInput);
+                      newText.appendChild(newSpan);
+                      break;
+                  case 2:
+                      newText = document.createTextNode(uList[idx].fill_in_datetime);
+                      break;
+                  case 3:
+                      newText = document.createTextNode(uList[idx].applicant_email);
+                      break;
+                  case 4:
+                      newText = document.createTextNode(uList[idx].department);
+                      break;
+                  case 5:
+                      newText = document.createTextNode(uList[idx].project_name);
+                      break;
+                  case 6:
+                      newText = document.createTextNode(uList[idx].phase);
+                      break;
+                  case 7:
+                      newText = document.createTextNode(uList[idx].bios_version);
+                      break;
+                  case 8:
+                      newText = document.createTextNode(uList[idx].os);
+                      break;
+                  case 9:
+                      newText = document.createTextNode(uList[idx].language);
+                      break;
+                  case 10:
+                      newText = document.createTextNode(uList[idx].issue);
+                      break;
+                  case 11:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-info in_progress";
+                      newText.id = "in_progress_btn";
+                      newText.innerHTML = "In Progress";
+                      break;
+                  case 12:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-danger fail";
+                      newText.id = "fail_btn";
+                      newText.innerHTML = "Fail";
+                      break;
+                  case 13:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-warning completed";
+                      newText.id = "completed_btn";
+                      newText.innerHTML = "Completed";
+                      break;
+                  case 14:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-primary remove";
+                      newText.id = "remove_btn";
+                      newText.innerHTML = "Remove";
+                      break;
+                  default:
+                      break;
+                }
+                newCell.appendChild(newText);
+            }
+        }
+        
+    }
+  
+  
+</script>
+</html>

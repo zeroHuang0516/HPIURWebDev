@@ -1,0 +1,2 @@
+django_views
+django_views_test

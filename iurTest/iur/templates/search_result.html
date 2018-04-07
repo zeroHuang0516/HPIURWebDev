@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>IUR Test System</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+    
+  .carousel-inner img {
+      width: 100%; /* Set width to 100% */
+      margin: auto;
+      min-height:200px;
+  }
+
+  /* Hide the carousel text when the screen is less than 600 pixels wide */
+  @media (max-width: 600px) {
+    .carousel-caption {
+      display: none; 
+    }
+  }
+
+    .jumbotron {
+      padding: 50px 50px 50px 20px;
+    }
+
+  #custom-search-input {
+        margin:0;
+        margin-top: 10px;
+        padding: 0;
+    }
+ 
+    #custom-search-input .search-query {
+        padding-right: 3px;
+        padding-right: 4px \9;
+        padding-left: 3px;
+        padding-left: 4px \9;
+        /* IE7-8 doesn't have border-radius, so don't indent the padding */
+ 
+        margin-bottom: 0;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+    }
+ 
+    #custom-search-input button {
+        border: 0;
+        background: none;
+        /** belows styles are working good */
+        padding: 2px 5px;
+        margin-top: 2px;
+        position: relative;
+        left: -28px;
+        /* IE7-8 doesn't have border-radius, so don't indent the padding */
+        margin-bottom: 0;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        color:#D9230F;
+    }
+ 
+    .search-query:focus + button {
+        z-index: 3;   
+    }
+
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="/units/borrow/">Borrow</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="/index">Home</a></li>
+        <li><a href="/units/list">Units</a></li>
+        <li><a href="/units/checkin">Units CheckIn</a></li>
+        <li class="active"><a href="/units/borrow">Search & Borrow</a></li>
+        <li><a href="/b_d_request/send_request">Send Dash Request</a></li>
+        <li><a href="/b_d_request/list">Dash Request List</a></li>
+        <li><a href="#">Send Email</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="container-fluid" id="table_div" style="display:;">
+  <div class="row">
+      <div class="col-md-12">
+          <h5 id="mySearchResults"></h5>
+          <a href="/units/borrow/" class="btn btn-info" role="button">Back to Search</a>
+          <table class="table table-condensed table-hover table-striped" width="647" id="search_result_list">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Move in Date</th>
+                <th>Owner</th>
+                <th>Core Team</th>
+                <th>Platform</th>
+                <th>Phase</th>
+                <th>SKU</th>
+                <th>CAT No.</th>
+                <th>S/N</th>
+                <th>Comment</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+
+</tbody>
+</table>
+        </div>
+</div>
+</body>
+<script type="text/javascript">
+    var searchResultList = JSON.parse("{{search_data|escapejs}}");
+    console.log(searchResultList.length);
+    var tableRef = document.getElementById('search_result_list').getElementsByTagName('tbody')[0];
+    mySearchResults.innerText = "Search......" + searchResultList.length + " results in total"
+    if(searchResultList.length > 0){
+      document.getElementById('table_div').style.display = "";
+      for (var idx = 0; idx<searchResultList.length; idx++){
+        var newRow   = tableRef.insertRow(tableRef.rows.length);
+        for (var i = 0; i < 11; i++){
+            var newCell = newRow.insertCell(i);
+            var newText;
+            switch(i){
+              case 0:
+                  newText = document.createTextNode(idx);
+                  break;
+              case 1:
+                  newText = document.createTextNode(searchResultList[idx].move_in_date);
+                  break;
+              case 2:
+                  newText = document.createTextNode(searchResultList[idx].owner);
+                  break;
+              case 3:
+                  newText = document.createTextNode(searchResultList[idx].core_team);
+                  break;
+              case 4:
+                  newText = document.createTextNode(searchResultList[idx].platform);
+                  break;
+              case 5:
+                  newText = document.createTextNode(searchResultList[idx].phase);
+                  break;
+              case 6:
+                  newText = document.createTextNode(searchResultList[idx].sku);
+                  break;
+              case 7:
+                  newText = document.createTextNode(searchResultList[idx].cat_no);
+                  break;
+              case 8:
+                  newText = document.createTextNode(searchResultList[idx].s_n);
+                  break;
+              case 9:
+                  newText = document.createTextNode(searchResultList[idx].comment);
+                  break;
+              case 10:
+                  newText = document.createTextNode(searchResultList[idx].status);
+                  break;
+              default:
+                  break;
+            }
+            newCell.appendChild(newText);  
+          }
+        }
+      }
+</script>
+</html>
