@@ -26,10 +26,80 @@ import smtplib
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import openpyxl
+from io import StringIO
+import xlsxwriter
+from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
+from openpyxl.chart import (
+    Reference,
+    Series,
+    BarChart
+)
+
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from mongoengine.django.auth import User 
+
+def login_view(request):
+    #connect('testdb')
+    from django.contrib.auth import login
+    from mongoengine.django.auth import User
+    from mongoengine.queryset import DoesNotExist
+    from django.contrib import messages
+    error_msg = ''
+    try:
+        user = User.objects.get(username=request.POST['username'])
+        if user.check_password(request.POST['password']):
+            user.backend = 'mongoengine.django.auth.MongoEngineBackend'
+            login(request, user)
+            request.session.set_expiry(60 * 60 * 1) # 1 hour timeout
+            if user['is_superuser']:
+            	return HttpResponseRedirect('/index/')
+            else:
+            	return HttpResponseRedirect('/uindex/')
+        else:
+            error_msg = u"Incorrect login name or password !"
+            error_msg = json.dumps(error_msg)
+            return render(request, 'hello_world.html',{'error_msg':error_msg})
+    except DoesNotExist:
+        error_msg = u"Incorrect login name or password !"
+        error_msg = json.dumps(error_msg)
+        return render(request, 'hello_world.html',{'error_msg':error_msg})
+    error_msg = json.dumps(error_msg)
+    return render(request, 'hello_world.html', {})
+
+def logout(request):
+    from django.contrib.auth import logout
+    logout(request)
+    return HttpResponseRedirect('/login/')
+
+def createuser(request): 
+    User.create_user(request.POST['username'],request.POST['password'])
+    return HttpResponseRedirect('/login/')
 
 
-def hello_world(request):
-    return render(request, 'hello_world.html')
+def index(request):
+	#from django.contrib.auth import logout
+	#logout(request.user)
+	if request.user.is_authenticated() and request.user['is_superuser']:
+		return render(request, 'indexPage.html')
+	else:
+		return HttpResponseRedirect('/login/')
+
+def uindex(request):
+	#from django.contrib.auth import logout
+	#logout(request.user)
+	if request.user.is_authenticated() and not request.user['is_superuser']:
+		return render(request, 'usrIndexPage.html')
+
+
+def login_page(request):
+	if request.user.is_authenticated() and request.user['is_superuser']:
+	    return render(request, 'indexPage.html')
+	elif request.user.is_authenticated() and not request.user['is_superuser']:
+	    return render(request, 'usrIndexPage.html')
+	else:
+	    return render(request, 'hello_world.html')
 
 def check_in_units(request):
 	return render(request, 'checkIn.html')
@@ -203,31 +273,41 @@ class myView(View):
         
         return HttpResponseRedirect('/index/')
 
-def send_mail_via_com():
-	info = ''
-	info += ('\n'+u'how are you'+'\n')
-	
-	 
+def send_mail_via_com(receive_email_adr, platform, requirement):
 
-	gmail_user = 'erica.huang@hp.com'
-	gmail_pwd = '@wtf09830927'
+	outlook_user = 'erica.huang@hp.com'
+	outlook_pwd = '@hyukoh09830927'
 
 	smtpserver = smtplib.SMTP('smtp-mail.outlook.com', 587)
 	smtpserver.ehlo()
 	smtpserver.starttls()
 	smtpserver.ehlo()
 
-	smtpserver.login(gmail_user, gmail_pwd)
-	 
+	smtpserver.login(outlook_user, outlook_pwd)
 
-	fromaddr = "erica.huang@hp.com"
+	msg = MIMEMultipart('alternative')
+	msg['Subject'] = 'IUR Pool Reminder'
+	msg['From'] = outlook_user
+	msg['To'] = receive_email_adr
 
-	toaddrs = ['fantastic0516@gmail.com', 'erica.huang@hp.com']
-	 
+	html = """\
+	<html>
+	  <head></head>
+	  <body>
+	    <h3>Hi!<br>
+	       The """+ requirement+""" task of """+ platform+""" has been finsihed!<br>
+	       Please come to IUR Pool to reclaim it.
+	    </h3>
+	    <h4>*** This is an automatically generated email, please do not reply ***</h4>
+	  </body>
+	</html>
+	"""
+	part2 = MIMEText(html, 'html')
+	msg.attach(part2)
 
-	msg = ("From: %s\r\nTo: %s\r\nSubject: %s\r\n" % (fromaddr, ", ".join(toaddrs), u'*********for test'))
+	
 	 
-	smtpserver.sendmail(fromaddr, toaddrs, msg+info)
+	smtpserver.sendmail(outlook_user, receive_email_adr, msg.as_string())
 	 
 
 	smtpserver.quit()
@@ -235,66 +315,20 @@ def send_mail_via_com():
 
 def send_email(request):
 	if request.method == 'POST':
-		send_mail_via_com()
-	return render(request, 'send_email.html')
-
-def b_d_request(request):
-	if request.method == 'POST' and 'fill_in_datetime' in request.POST:
-	   
-	   fill_in_datetime = request.POST.get('fill_in_datetime', None)
-	   applicant_email = request.POST.get('applicant_email', None)
-	   department = request.POST.get('department', None)
-	   project_name = request.POST.get('project_name', None)
-	   phase = request.POST.get('phase', None)
-	   bios_version = request.POST.get('bios_version', None)
-	   OS = request.POST.get('OS', None)
-	   language = request.POST.get('language', None)
-	   issue = request.POST.get('issue', None)
-	   return_status = {'status': ""}
-	   
-	   new_dash_request = Dash_request(
-	   							pick_up = "X",
-	   							status = "Not YET",
-	   							fill_in_datetime = fill_in_datetime,
-        					 	applicant_email = applicant_email,
-        					 	department = department,
-        					 	project_name = project_name,
-        					 	phase = phase,
-        					 	bios_version = bios_version,
-        					 	os = OS,
-        					 	language = language,
-        					 	issue = issue,
-        					)
-	   if(len(Dash_request.objects(fill_in_datetime= str(fill_in_datetime))) == 0):
-   			new_dash_request.save()
-	   
-	   return_status = json.dumps(return_status)
-	   if not request.POST._mutable:
-   			request.POST._mutable = True
-	   #del request.POST['borrow_person']
-	   #del request.POST['borrow_cat']
-	   #del request.POST['borrow_date']
-	   #del request.POST['borrow_purpose']
-	   #print(request.POST)
-	   return render(request,'b_d_request.html',{'return_status': return_status})
-	return render(request,'b_d_request.html')
-
-def b_d_request_list(request):
-	if request.method == 'POST' :
-		print(request.POST.get('fill_in_datetime'))
 		existing_request = Dash_request.objects(fill_in_datetime= request.POST.get('fill_in_datetime'))[0]
-		#print(existing_request[0]["status"])
-		existing_request["status"] = "Completed"
+		existing_request["press_send_btn_time"] = request.POST.get('fill_in_datetime')
 		existing_request.save()
+		#print(request.POST.get('press_send_btn_time'))
+		send_mail_via_com(request.POST.get('email_adr'),request.POST.get('platform'),request.POST.get('requirement'))
 
 	data = []
 	for u in Dash_request.objects.all():
 		r = {}
-		r['pick_up'] = (u["pick_up"])
 		r['status'] = (u["status"])
 		r['fill_in_datetime'] = (u["fill_in_datetime"])
 		r['applicant_email'] = (u["applicant_email"])
 		r['department'] = (u["department"])
+		r['requirement'] = (u['requirement'])
 		r['project_name'] = (u["project_name"])
 		r['phase'] = (u["phase"])
 		r['bios_version'] = (u["bios_version"])
@@ -305,3 +339,211 @@ def b_d_request_list(request):
 	data = json.dumps(data)
 
 	return render(request, 'b_d_request_list.html',{'list_data':data})
+
+def b_d_request(request):
+	if request.user.is_authenticated():
+		if request.method == 'POST' and 'fill_in_datetime' in request.POST:
+		   status = ''
+		   fill_in_datetime = request.POST.get('fill_in_datetime', None)
+		   press_send_btn_time = ''
+		   applicant_email = request.POST.get('applicant_email', None)
+		   department = request.POST.get('department', None)
+		   project_name = ''
+		   requirement = request.POST.get('requirement', None)
+		   phase = ''
+		   bios_version = ''
+		   OS = ''
+		   language = ''
+		   password = ''
+		   issue = ''
+		   if requirement == 'Update BIOS':
+	   			project_name = request.POST.get('bios_project_name', None)
+	   			phase = request.POST.get('bios_phase', None)
+	   			bios_version = request.POST.get('bios_bios_version', None)
+	   			password = request.POST.get('bios_set_password', None)
+	   			issue = request.POST.get('bios_issue', None)
+		   elif requirement == 'Dash Image':
+	   			project_name = request.POST.get('dash_project_name', None)
+	   			phase = request.POST.get('dash_phase', None)
+	   			OS = request.POST.get('dash_OS', None)
+	   			language = request.POST.get('dash_language', None)
+	   			password = request.POST.get('dash_set_password', None)
+	   			issue = request.POST.get('dash_issue', None)
+		   else:
+		   		project_name = request.POST.get('both_project_name', None)
+		   		phase = request.POST.get('both_phase', None)
+		   		bios_version = request.POST.get('both_bios_version', None)
+		   		OS = request.POST.get('both_OS', None)
+		   		language = request.POST.get('both_language', None)
+		   		password = request.POST.get('set_password', None)
+		   		issue = request.POST.get('both_issue', None)
+		   
+		   return_status = {'status': ""}
+		   
+		   new_dash_request = Dash_request(
+		   							status = status,
+		   							fill_in_datetime = fill_in_datetime,
+		   							press_send_btn_time = press_send_btn_time,
+	        					 	applicant_email = applicant_email,
+	        					 	department = department,
+	        					 	requirement = requirement,
+	        					 	project_name = project_name,
+	        					 	phase = phase,
+	        					 	bios_version = bios_version,
+	        					 	os = OS,
+	        					 	language = language,
+	        					 	issue = issue,
+	        					 	use = "test",
+	        					 	password = password,
+	        					)
+
+		   if(len(Dash_request.objects(fill_in_datetime= str(fill_in_datetime))) == 0):
+	   			new_dash_request.save()
+		   
+		   return_status = json.dumps(return_status)
+		   if not request.POST._mutable:
+	   			request.POST._mutable = True
+		   #del request.POST['borrow_person']
+		   #del request.POST['borrow_cat']
+		   #del request.POST['borrow_date']
+		   #del request.POST['borrow_purpose']
+		   #print(request.POST)
+		   return HttpResponseRedirect('/b_d_request/success')
+		return render(request,'b_d_request.html')
+	else:
+		return HttpResponseRedirect('/login/')
+
+def b_d_request_success(request):
+	return render(request, 'b_d_request_success.html')
+
+def set_sheet_col_width(ws):
+   dim_dist = {}
+   for row in ws.rows:
+      for cell in row:
+         if cell.value:
+            dim_dist[cell.column] = max((dim_dist.get(cell.column, 0), len(str(cell.value))+7))
+            
+   for col, value in dim_dist.items():
+      ws.column_dimensions[col].width=value
+   return ws
+
+def report_down_load(request):
+	print(request.method)
+	if request.method == 'POST':
+		from_datetime = request.POST.get('from_datetime')
+		to_datetime = request.POST.get('to_datetime') 
+	response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+	response['Content-Disposition'] = 'attachment; filename=report.xlsx'
+	wb = openpyxl.Workbook()
+	ws = wb.get_active_sheet()
+	ws.title = "Records"
+	count_ws = wb.create_sheet(title="Statistics")
+	header_list = ['Fill in Datetime','Applicant\'s Emails','Product Name','Requirement','BIOS','OS','Language','Department']
+	
+	for row in range(1,2):
+		for col in range(1,9):
+			ws.cell(row=row, column=col).value = header_list[col-1]
+			ws.cell(row=row,column=col).fill = PatternFill(fgColor="d2e9ff", fill_type = "solid")
+			ws.cell(row=row,column=col).border = Border(left=Side(style='thin',color='0072e3'),
+														right=Side(style='thin',color='0072e3'), 
+														top=Side(style='thin',color='0072e3'), 
+														bottom=Side(style='thin',color='0072e3'))
+
+	data = []
+	statistics=[0,0,0] #both/bios/dash
+	for u in Dash_request.objects.all():
+		r = []
+		if((u["requirement"])) == 'Dash Image & Update BIOS':
+			statistics[0] += 1
+		elif ((u["requirement"])) == 'Update BIOS':
+			statistics[1] += 1
+		elif ((u["requirement"])) == 'Dash Image':
+			statistics[2] += 1
+
+		r.append((u["fill_in_datetime"]))
+		r.append((u["applicant_email"]))
+		r.append((u["project_name"]))
+		r.append((u['requirement']))
+		r.append((u["bios_version"]))
+		r.append((u["os"]))
+		r.append((u["language"]))
+		r.append((u["department"]))
+		data.append(r)
+
+	for row in range(2,len(data)+2):
+		for col in range(1,9):
+			ws.cell(row=row, column=col).value = data[row-2][col-1]
+			if row%2 != 0:
+				ws.cell(row=row,column=col).fill = PatternFill(fgColor="f0f0f0", fill_type = "solid")
+	
+	ws = set_sheet_col_width(ws)
+
+	# for sheet Count
+	count_ws.cell(row=1,column=1).value = 'Service Status-Period from' + from_datetime + ' to '+ to_datetime
+	count_ws.cell(row=2,column=1).value = 'Items'
+	count_ws.cell(row=2,column=2).value = 'no.'
+	count_ws.cell(row=2,column=3).value = 'Note'
+	count_ws.cell(row=3,column=1).value = '#Request of Image refresh with BIOS update'
+	count_ws.cell(row=4,column=1).value = '#Request of BIOS update only'
+	count_ws.cell(row=5,column=1).value = '#Request of Image refresh only'
+	for j in range(3,6):
+		count_ws.cell(row=j,column=2).value = str(statistics[j-3]) +' units'
+		count_ws.cell(row=j,column=3).value = '100 of request delivered in 4hrs'
+
+	count_ws = set_sheet_col_width(count_ws)
+	count_ws.merge_cells('A1:C1')
+	count_ws.cell(row=1,column=1).alignment = Alignment(horizontal='center')
+	count_ws.cell(row=1,column=1).fill = PatternFill(fgColor="FFD306", fill_type = "solid")
+	count_ws.cell(row=1,column=1).border = Border(left=Side(style='thin',color='5b5b5b'),
+														right=Side(style='thin',color='5b5b5b'), 
+														top=Side(style='thin',color='5b5b5b'), 
+														bottom=Side(style='thin',color='5b5b5b'))
+	for p in range(2,6):
+		for k in range(1,4):
+			if(p==2):
+				count_ws.cell(row=2,column=k).fill = PatternFill(fgColor="FFE665", fill_type = "solid")
+				count_ws.cell(row=2,column=k).border = Border(left=Side(style='thin',color='5b5b5b'),
+														right=Side(style='thin',color='5b5b5b'), 
+														top=Side(style='thin',color='5b5b5b'), 
+														bottom=Side(style='thin',color='5b5b5b'))
+			else:
+				count_ws.cell(row=p,column=k).fill = PatternFill(fgColor="f0f0f0", fill_type = "solid")
+				count_ws.cell(row=p,column=k).border = Border(left=Side(style='thin',color='5b5b5b'),
+														right=Side(style='thin',color='5b5b5b'), 
+														top=Side(style='thin',color='5b5b5b'), 
+														bottom=Side(style='thin',color='5b5b5b'))
+
+
+	wb.save(response)
+	return response
+
+
+def b_d_request_list(request):
+	if request.user.is_authenticated() and request.user['is_superuser']:
+		if request.method == 'POST':
+			status = request.POST.get('status')
+			existing_request = Dash_request.objects(fill_in_datetime= request.POST.get('fill_in_datetime'))[0]
+			#print(existing_request[0]["status"])
+			existing_request["status"] = status
+			existing_request.save()
+
+		data = []
+		for u in Dash_request.objects.all():
+			r = {}
+			r['status'] = (u["status"])
+			r['fill_in_datetime'] = (u["fill_in_datetime"])
+			r['applicant_email'] = (u["applicant_email"])
+			r['department'] = (u["department"])
+			r['requirement'] = (u['requirement'])
+			r['project_name'] = (u["project_name"])
+			r['phase'] = (u["phase"])
+			r['bios_version'] = (u["bios_version"])
+			r['os'] = (u["os"])
+			r['language'] = (u["language"])
+			r['issue'] = (u["issue"])
+			data.append(r)
+		data = json.dumps(data)
+
+		return render(request, 'b_d_request_list.html',{'list_data':data})
+	else:
+		return HttpResponseRedirect('/login/')

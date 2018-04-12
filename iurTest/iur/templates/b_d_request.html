@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>IUR Test System</title>
+  <title>IUR System</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -58,31 +58,28 @@
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
         <li><a href="/index">Home</a></li>
-        <li><a href="/units/list">Units</a></li>
-        <li><a href="/units/checkin">Units CheckIn</a></li>
-        <li><a href="/units/borrow">Search & Borrow</a></li>
         <li class="active"><a href="/b_d_request/send_request">Send Dash Request</a></li>
         <li><a href="/b_d_request/list">Dash Request List</a></li>
-        <li><a href="#">Send Email</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        <li><a href="/logout/"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
       </ul>
     </div>
   </div>
 </nav>
+
 <div class="container" style="margin: 10px">
-          <div class="modal fade" id="fjFilterModal">
+          
             <form type="text" action="/b_d_request/send_request" method='post' style="margin:0" id="request_form">
-        {% csrf_token %}
+            {% csrf_token %}
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title">B & D Request</h5>
                 </div>
                 <div class="modal-body">
-                  <div class="form-group row">
-                    <label class="col-form-label col-md-2">Fill in Date</label>
+                  <div class="form-group row" style="display: none;">
+                    <label class="col-form-label col-md-2" >Fill in Date</label>
                     <div class=col-md-10>
                       <div class="form-inline">
                         <div class="form-group mx-2">
@@ -113,24 +110,34 @@
                             <span class=input-group-addon></span>
                             <div class="input-group dropdown">
                               <input type="text" class="form-control dropdown-toggle department" value="" placeholder="Commodity" style="border-radius: 0px" name="department" id="department">
-                              <ul class="dropdown-menu">
-                                <li><a href="#" data-value="Commodity">Commodity</a></li>
-                                <li><a href="#" data-value="Platform Technology">Platform Technology</a></li>
-                                <li><a href="#" data-value="SEPM">SEPM</a></li>
-                                <li><a href="#" data-value="Graphics">Graphics</a></li>
-                                <li><a href="#" data-value="Device Enabling">Device Enabling</a></li>
-                                <li><a href="#" data-value="BIOS & EC Team">BIOS & EC Team</a></li>
-                                <li><a href="#" data-value="EE">EE</a></li>
-                                <li><a href="#" data-value="ME">ME</a></li>
-                                <li><a href="#" data-value="PE">PE</a></li>
-                                <li><a href="#" data-value="PDM">PDM</a></li>
-                                <li><a href="#" data-value="Validation NB SCIT TPM">Validation NB SCIT TPM</a></li>
-                                <li><a href="#" data-value="Audio/Camera/Performance">Audio/Camera/Performance</a></li>
-                                <li><a href="#" data-value="OS Team">OS Team</a></li>
-                                <li><a href="#" data-value="Communications Tech">Communications Tech</a></li>
-                                <li><a href="#" data-value="System Manager">System Manager</a></li>
-                                <li><a href="#" data-value="Accessory Team">Accessory Team</a></li>
-                                <li><a href="#" data-value="Others">Others</a></li>
+                              <ul class="dropdown-menu" style="height: 200px; overflow: scroll;">
+                                <li><a data-value="3LS">3LS</a></li>
+                                <li><a data-value="Accessory team">Accesssory team</a></li>
+                                <li><a data-value="BIOS & EC team">BIOS & EC team</a></li>
+                                <li><a data-value="Core Validation(Maruko Liu)">Core Validation(Maruko Liu)</a></li>
+                                <li><a data-value="Communications Tech(Comm)">Communications Tech(Comm)</a></li>
+                                <li><a data-value="Commodity">Commodity</a></li>
+                                <li><a data-value="Device Enabling">Device Enabling</a></li>
+                                <li><a data-value="CUE">CUE</a></li>
+                                <li><a data-value="Dogfood">Dogfood</a></li>
+                                <li><a data-value="DT">DT</a></li>
+                                <li><a data-value="EE">EE</a></li>
+                                <li><a data-value="Graphics">Graphics</a></li>
+                                <li><a data-value="Marketing">Marketing</a></li>
+                                <li><a data-value="ME">ME</a></li>
+                                <li><a data-value="Platform Technology(Eric Lee)">Platform Technology(Eric Lee)</a></li>
+                                <li><a data-value="Image Engineering">Image Engineering</a></li>
+                                <li><a data-value="OS team">OS team</a></li>
+                                <li><a data-value="System Manager">System Manager</a></li>
+                                <li><a data-value="Software Tool">Software Tool</a></li>
+                                <li><a data-value="Audio/ Camera/ Performance">Audio/ Camera/ Performance</a></li>
+                                <li><a data-value="PE">PE</a></li>
+                                <li><a data-value="PDM">PDM</a></li>
+                                <li><a data-value="Platform Enabling">Platform Enabling</a></li>
+                                <li><a data-value="SEPM">SEPM</a></li>
+                                <li><a data-value="Validation Functional test(James Fang)">Validation Functional test(James Fang)</a></li>
+                                <li><a data-value="Validation NB SCIT TPM(Carson Hsu)">Validation NB SCIT TPM(Carson Hsu)</a></li>
+                                <li><a data-value="Other">Other</a></li>
                               </ul>
                               <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
                             </div>
@@ -140,6 +147,16 @@
                     </div>
                   </div>
                   <div class="form-group row">
+                    <label class="col-form-label col-md-2">Requirement</label>
+                    <div class=col-md-10>
+                      <input class="form-control" name="requirement" id="requirement" value="" style="display: none">
+                      <div><button type="button" class="btn btn-info" id="send_borrow_request" style="margin-bottom: 5px; width:200px;" onclick="onclick_dash_image();">Dash Image</button></div>
+                      <div><button type="button" class="btn btn-warning" id="send_borrow_request" style="margin-bottom: 5px; width:200px;" onclick="onclick_update_bios();">Update BIOS</button></div>
+                      <div><button type="button" class="btn btn-danger" id="send_borrow_request" style="margin-bottom: 5px; width:200px;" onclick="onclick_both();">Dash Image & Update BIOS</button></div>
+                    </div>
+                  </div>
+                <div id= "both_part" style="display: none">
+                  <div class="form-group row">
                     <label class="col-form-label col-md-2">Project Name</label>
                     <div class=col-md-10>
                       <div class="form-inline">
@@ -147,12 +164,85 @@
                           <div class=input-group>
                             <span class=input-group-addon></span>
                             <div class="input-group dropdown">
-                              <input type="text" class="form-control dropdown-toggle project_name" value="" placeholder="Bumblebee 1.0 (EliteBook 1030 G3)" style="border-radius: 0px" name="project_name" id="project_name">
-                              <ul class="dropdown-menu">
-                                <li><a href="#" data-value="Bumblebee 1.0 (EliteBook 1030 G3)">Bumblebee 1.0 (EliteBook 1030 G3)</a></li>
-                                <li><a href="#" data-value="Megatron 1.0 (1013 G3)">Megatron 1.0 (1013 G3)</a></li>
-                                <li><a href="#" data-value="Computron 14/14W/15 (840/z14u/850 G5)">Computron 14/14W/15 (840/z14u/850 G5)</a></li>
-                                <li><a href="#" data-value="Zigzag 1.0 (zBookS15 G5)">Zigzag 1.0 (zBookS15 G5)</a></li>
+                              <input type="text" class="form-control dropdown-toggle both_project_name" value="" placeholder="Bumblebee 1.0 (EliteBook 1030 G3)" style="border-radius: 0px" name="both_project_name" id="both_project_name">
+                              <ul class="dropdown-menu" style=" height:200px; overflow: scroll;">
+                                <li><a data-value="Other">Other</a></li>
+                                <li><a data-value="Armorhide 1.0 (zBook17 G5)">Armorhide 1.0 (zBook17 G5)</a></li>
+                                <li><a data-value="Vortex 1.0 (zBook15 G5)">Vortex 1.0 (zBook15 G5)</a></li>
+                                <li><a data-value="Zigzag 1.0 (zBookS15 G5)">Zigzag 1.0 (zBookS15 G5)</a></li>
+                                <li><a data-value="Bumblebee 1.0 (EliteBook 1030 G3)">Bumblebee 1.0 (EliteBook 1030 G3)</a></li>
+                                <li><a data-value="Megatron 1.0 (1013 G3)">Megatron 1.0 (1013 G3)</a></li>
+                                <li><a data-value="Blurr">Blurr</a></li>
+                                <li><a data-value="Rumble">Rumble</a></li>
+                                <li><a data-value="Cannonball">Cannonball</a></li>
+                                <li><a data-value="Computron 14/14W/15 (840/z14u/850 G5)">Computron 14/14W/15 (840/z14u/850 G5)</a></li>
+                                <li><a data-value="Skyfire 1.0 (830 G5)">Skyfire 1.0 (830 G5)</a></li>
+                                <li><a data-value="FirstAid 1.0 (840 G5 HC)">FirstAid 1.0 (840 G5 HC)</a></li>
+                                <li><a data-value="Cybertron 1.0(840r G4)">Cybertron 1.0(840r G4)</a></li>
+                                <li><a data-value="Tetris (AMD)">Tetris (AMD)</a></li>
+                                <li><a data-value="Longhaul 1.0 (735 G5)">Longhaul 1.0 (735 G5)</a></li>
+                                <li><a data-value="Trypticon 14/15 (745/755 G5)">Trypticon 14/15 (745/755 G5)</a></li>
+                                <li><a data-value="Tracks 14 1.0 (645 G4)">Tracks 14 1.0 (645 G4)</a></li>
+                                <li><a data-value="Chromia-U 14/15/H-15 (640/650 G4)">Chromia-U 14/15/H-15 (640/650 G4)</a></li>
+                                <li><a data-value="Perceptor 1.0 (455 G5)">Perceptor 1.0 (455 G5)</a></li>
+                                <li><a data-value="Autobot 2.0 (Pro X360 11 G2)">Autobot 2.0 (Pro X360 11 G2)</a></li>
+                                <li><a data-value="Brando 1.0 (1040 G4)">Brando 1.0 (1040 G4)</a></li>
+                                <li><a data-value="Eastwood 1.0 (X360 1020 G2)">Eastwood 1.0 (X360 1020 G2)</a></li>
+                                <li><a data-value="Ramjat 1.0 (66 Pro G1)">Ramjat 1.0 (66 Pro G1)</a></li>
+                                <li><a data-value="RRRR (430/440/450/470 G5)">RRRR (430/440/450/470 G5)</a></li>
+                                <li><a data-value="Affleck 1.0 (zBook17 G4)">Affleck 1.0 (zBook17 G4)</a></li>
+                                <li><a data-value="Autobot 1.0 (Pro X360 11 G1)">Autobot 1.0 (Pro X360 11 G1)</a></li>
+                                <li><a data-value="Clonney 14/15 (640/650 G3)">Clonney 14/15 (640/650 G3)</a></li>
+                                <li><a data-value="Connery 1.0 (840/850 G4)">Connery 1.0 (840/850 G4)</a></li>
+                                <li><a data-value="Damon 1.0 (zBook 14x2)">Damon 1.0 (zBook 14x2)</a></li>
+                                <li><a data-value="Dunes 4.0 (KBL) (11G3)">Dunes 4.0 (KBL) (11G3)</a></li>
+                                <li><a data-value="Jolie 1.0 (1012X2 G2)">Jolie 1.0 (1012X2 G2)</a></li>
+                                <li><a data-value="Ledger 1.0 (725 G4)">Ledger 1.0 (725 G4)</a></li>
+                                <li><a data-value="Oldman 1.0 (1030 X360 G1)">Oldman 1.0 (1030 X360 G1)</a></li>
+                                <li><a data-value="Pitt 1.0 (455 G4)">Pitt 1.0 (455 G4)</a></li>
+                                <li><a data-value="Redmayne17 1.0 (470 G4)">Redmayne17 1.0 (470 G4)</a></li>
+                                <li><a data-value="Renner15 1.0 (450 G4)">Renner15 1.0 (450 G4)</a></li>
+                                <li><a data-value="Rourke14 1.0 (440 G4)">Rourke14 1.0 (440 G4)</a></li>
+                                <li><a data-value="Reilly13 1.0 (430 G4)">Reilly13 1.0 (430 G4)</a></li>
+                                <li><a data-value="Stallone 1.0 (820 G4)">Stallone 1.0 (820 G4)</a></li>
+                                <li><a data-value="Streep 1.0 (612 G2)">Streep 1.0 (612 G2)</a></li>
+                                <li><a data-value="Travolta 1.0 (745/755 G4)">Travolta 1.0 (745/755 G4)</a></li>
+                                <li><a data-value="2016-Tatum 14/15 (645/655 G3)">2016-Tatum 14/15 (645/655 G3)</a></li>
+                                <li><a data-value="2016-Vaughn 1.0 (zBook15 G4)">2016-Vaughn 1.0 (zBook15 G4)</a></li>
+                                <li><a data-value="2016-Zane 1.0 (zBookS G4)">2016-Zane 1.0 (zBookS G4)</a></li>
+                                <li><a data-value="2015-Aria 1.0 (zbook 17 G3)">2015-Aria 1.0 (zbook 17 G3)</a></li>
+                                <li><a data-value="2015-Bellagio 1.0 (1040 G3)">2015-Bellagio 1.0 (1040 G3)</a></li>
+                                <li><a data-value="2015-Boardwalk 1.0 (1030 G1)">2015-Boardwalk 1.0 (1030 G1)</a></li>
+                                <li><a data-value="2015-Caesars 1.0 (840/850/z15u G3)">2015-Caesars 1.0 (840/850/z15u G3)</a></li>
+                                <li><a data-value="2015-Circus_U 1.0 (640/650 G2))">2015-Circus_U 1.0 (640/650 G2))</a></li>
+                                <li><a data-value="2015-Circus_H 1.0 (640/650 G2)">2015-Circus_H 1.0 (640/650 G2)</a></li>
+                                <li><a data-value="2015-Dunes 3.0 (SKL)(11 G2)">2015-Dunes 3.0 (SKL)(11 G2)</a></li>
+                                <li><a data-value="2015-Eagle 1.0 (608 G1)">2015-Eagle 1.0 (608 G1)</a></li>
+                                <li><a data-value="2015-Encore 1.0 (Folio G1)">2015-Encore 1.0 (Folio G1)</a></li>
+                                <li><a data-value="2015-Galway 1.0 (10EE G1)">2015-Galway 1.0 (10EE G1)</a></li>
+                                <li><a data-value="2015-Ladyluck 1.0 (725 G3)">2015-Ladyluck 1.0 (725 G3)</a></li>
+                                <li><a data-value="2015-Meritage 1.0 (1012 G1)">2015-Meritage 1.0 (1012 G1)</a></li>
+                                <li><a data-value="2015-Palazzo 1.0 (455 G3)">2015-Palazzo 1.0 (455 G3)</a></li>
+                                <li><a data-value="2015-Palazzo_Lite 1.0 (455 G3)">2015-Palazzo_Lite 1.0 (455 G3)</a></li>
+                                <li><a data-value="2015-Rivera 1.0 (470 G3)">2015-Rivera 1.0 (470 G3)</a></li>
+                                <li><a data-value="2015-Regent 1.0 (450 G3)">2015-Regent 1.0 (450 G3)</a></li>
+                                <li><a data-value="2015-Riata 1.0 (440 G3)">2015-Riata 1.0 (440 G3)</a></li>
+                                <li><a data-value="2015-Royal 1.0 (430 G3)">2015-Royal 1.0 (430 G3)</a></li>
+                                <li><a data-value="2015-Treature Island 1.0 (745/755 G3)">2015-Treature Island 1.0 (745/755 G3)</a></li>
+                                <li><a data-value="2015-Tropicana 1.0 (645/655 G2)">2015-Tropicana 1.0 (645/655 G2)</a></li>
+                                <li><a data-value="2015-Sands 1.0 (820 G3)">2015-Sands 1.0 (820 G3)</a></li>
+                                <li><a data-value="2015-Venetian 1.0 (zBook 15 G3)">2015-Venetian 1.0 (zBook 15 G3)</a></li>
+                                <li><a data-value="2015-Zoltar 1.0 (zBookStudio G3)">2015-Zoltar 1.0 (zBookStudio G3)</a></li>
+                                <li><a data-value="2014-BazookaJR 1.0 (1020 G1)">2014-BazookaJR 1.0 (1020 G1)</a></li>
+                                <li><a data-value="2014-Bandit 2.0 (9680m)">2014-Bandit 2.0 (9680m)</a></li>
+                                <li><a data-value="2014-Reeses 1.0 (450 G2)">2014-Reeses 1.0 (450 G2)</a></li>
+                                <li><a data-value="2014-Olympia 1.0 (1011 G1)">2014-Olympia 1.0 (1011 G1)</a></li>
+                                <li><a data-value="2014-Tootsie 14/15 (745/755 G2)">2014-Tootsie 14/15 (745/755 G2)</a></li>
+                                <li><a data-value="2013-Chiclet 14/15 (840/850 G2)">2013-Chiclet 14/15 (840/850 G2)</a></li>
+                                <li><a data-value="2013-Comet 14/15 (840/850 G1)">2013-Comet 14/15 (840/850 G1)</a></li>
+                                <li><a data-value="2013-Switchback (820 G1)">2013-Switchback (820 G1)</a></li>
+                                <li><a data-value="2013-Astro 2 (Elite Pad 1000)">2013-Astro 2 (Elite Pad 1000)</a></li>
+                                <li><a data-value="2012-Astro 1 (Elite Pad 900)">2012-Astro 1 (Elite Pad 900)</a></li>
                               </ul>
                               <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
                             </div>
@@ -169,12 +259,11 @@
                           <div class=input-group>
                             <span class=input-group-addon></span>
                             <div class="input-group dropdown">
-                              <input type="text" class="form-control dropdown-toggle phase" value="" placeholder="SI1" style="border-radius: 0px" name="phase" id="phase">
+                              <input type="text" class="form-control dropdown-toggle both_phase" value="" placeholder="SI" style="border-radius: 0px" name="both_phase" id="both_phase">
                               <ul class="dropdown-menu">
-                                <li><a href="#" data-value="SI1">SI1</a></li>
-                                <li><a href="#" data-value="SI2">SI2</a></li>
-                                <li><a href="#" data-value="PV">PV</a></li>
-                                <li><a href="#" data-value="MV">MV</a></li>
+                                <li><a data-value="SI">SI</a></li>
+                                <li><a data-value="PV">PV</a></li>
+                                <li><a data-value="MV">MV</a></li>
                               </ul>
                               <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
                             </div>
@@ -191,11 +280,11 @@
                           <div class=input-group>
                             <span class=input-group-addon></span>
                             <div class="input-group dropdown">
-                              <input type="text" class="form-control dropdown-toggle bios_version" value="" placeholder="No need" style="border-radius: 0px" name="bios_version" id="bios_version">
+                              <input type="text" class="form-control dropdown-toggle both_bios_version" value="" placeholder="Latest" style="border-radius: 0px" name="both_bios_version" id="both_bios_version">
                               <ul class="dropdown-menu">
-                                <li><a href="#" data-value="No need">No need</a></li>
-                                <li><a href="#" data-value="Latest">Latest</a></li>
-                                <li><a href="#" data-value="">Fill In by yourself</a></li>
+                                <li><a data-value="Latest">Latest</a></li>
+                                <li><a data-value="RTM">RTM</a></li>
+                                <li><a data-value="">Fill In by yourself</a></li>
                               </ul>
                               <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
                             </div>
@@ -212,14 +301,13 @@
                           <div class=input-group>
                             <span class=input-group-addon></span>
                             <div class="input-group dropdown">
-                              <input type="text" class="form-control dropdown-toggle os" value="" placeholder="Windows10, 32bit" style="border-radius: 0px" id="OS" name="OS">
+                              <input type="text" class="form-control dropdown-toggle both_os" value="" placeholder="Windows10, 64bit" style="border-radius: 0px" id="both_OS" name="both_OS">
                               <ul class="dropdown-menu">
-                                <li><a href="#" data-value="Windows10, 32bit">Windows10, 32bit</a></li>
-                                <li><a href="#" data-value="Windows10, 64bit">Windows10, 64bit</a></li>
-                                <li><a href="#" data-value="Windows8, 32bit">Windows8, 32bit</a></li>
-                                <li><a href="#" data-value="Windows8, 64bit">Windows8, 64bit</a></li>
-                                <li><a href="#" data-value="Windows7, 32bit">Windows8, 32bit</a></li>
-                                <li><a href="#" data-value="Windows7, 64bit">Windows8, 64bit</a></li>
+                                <li><a data-value="Windows7, 32bit">Windows7, 32bit</a></li>
+                                <li><a data-value="Windows7, 64bit">Windows7, 64bit</a></li>
+                                <li><a data-value="Windows8, 64bit">Windows8, 64bit</a></li>
+                                <li><a data-value="Windows8.1, 64bit">Windows8.1, 64bit</a></li>
+                                <li><a data-value="Windows10, 64bit">Windows10, 64bit</a></li> 
                               </ul>
                               <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
                             </div>
@@ -236,13 +324,29 @@
                           <div class=input-group>
                             <span class=input-group-addon></span>
                             <div class="input-group dropdown">
-                              <input type="text" class="form-control dropdown-toggle language" value="" placeholder="US#ABA 英文" style="border-radius: 0px" id="language" name="language">
+                              <input type="text" class="form-control dropdown-toggle both_language" value="" placeholder="US#ABA 英文" style="border-radius: 0px" id="both_language" name="both_language">
                               <ul class="dropdown-menu">
-                                <li><a href="#" data-value="US#ABA 英文">US#ABA 英文</a></li>
-                                <li><a href="#" data-value="TW#AB0 繁體中文">TW#AB0 繁體中文</a></li>
+                                <li><a data-value="US#ABA 英文">US#ABA 英文</a></li>
+                                <li><a data-value="TW#AB0 繁體中文">TW#AB0 繁體中文</a></li>
+                                <li><a data-value="PRC#AB2 簡體中文">PRC#AB2 簡體中文</a></li>
+                                <li><a data-value="JP#ABJ 日文">JP#ABJ 日文</a></li>
+                                <li><a data-value="其他:">其他:</a></li>
                               </ul>
                               <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
                             </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Is there any password? If there is, Password:</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <input class=form-control name="set_password" id="set_password" type="text" placeholder="Password" step=1 min=0>
                           </div>
                         </div>
                       </div>
@@ -255,22 +359,385 @@
                         <div class="form-group mx-2">
                           <div class=input-group>
                             <span class=input-group-addon></span>
-                            <input class=form-control name="issue" id="issue" type="text" placeholder="ex. Cannot open the unit" step=1 min=0>
+                            <input class=form-control name="both_issue" id="both_issue" type="text" placeholder="ex. Cannot open the unit" step=1 min=0>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="modal-footer">
-                  <button type="submit" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary" id="send_borrow_request">Send Request</button>
+
+
+                <div id= "dash_image_part" style="display: none">
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Project Name</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <div class="input-group dropdown">
+                              <input type="text" class="form-control dropdown-toggle dash_project_name" value="" placeholder="Bumblebee 1.0 (EliteBook 1030 G3)" style="border-radius: 0px" name="dash_project_name" id="dash_project_name">
+                              <ul class="dropdown-menu" style=" height:200px; overflow: scroll;">
+                                <li><a data-value="Other">Other</a></li>
+                                <li><a data-value="Armorhide 1.0 (zBook17 G5)">Armorhide 1.0 (zBook17 G5)</a></li>
+                                <li><a data-value="Vortex 1.0 (zBook15 G5)">Vortex 1.0 (zBook15 G5)</a></li>
+                                <li><a data-value="Zigzag 1.0 (zBookS15 G5)">Zigzag 1.0 (zBookS15 G5)</a></li>
+                                <li><a data-value="Bumblebee 1.0 (EliteBook 1030 G3)">Bumblebee 1.0 (EliteBook 1030 G3)</a></li>
+                                <li><a data-value="Megatron 1.0 (1013 G3)">Megatron 1.0 (1013 G3)</a></li>
+                                <li><a data-value="Blurr">Blurr</a></li>
+                                <li><a data-value="Rumble">Rumble</a></li>
+                                <li><a data-value="Cannonball">Cannonball</a></li>
+                                <li><a data-value="Computron 14/14W/15 (840/z14u/850 G5)">Computron 14/14W/15 (840/z14u/850 G5)</a></li>
+                                <li><a data-value="Skyfire 1.0 (830 G5)">Skyfire 1.0 (830 G5)</a></li>
+                                <li><a data-value="FirstAid 1.0 (840 G5 HC)">FirstAid 1.0 (840 G5 HC)</a></li>
+                                <li><a data-value="Cybertron 1.0(840r G4)">Cybertron 1.0(840r G4)</a></li>
+                                <li><a data-value="Tetris (AMD)">Tetris (AMD)</a></li>
+                                <li><a data-value="Longhaul 1.0 (735 G5)">Longhaul 1.0 (735 G5)</a></li>
+                                <li><a data-value="Trypticon 14/15 (745/755 G5)">Trypticon 14/15 (745/755 G5)</a></li>
+                                <li><a data-value="Tracks 14 1.0 (645 G4)">Tracks 14 1.0 (645 G4)</a></li>
+                                <li><a data-value="Chromia-U 14/15/H-15 (640/650 G4)">Chromia-U 14/15/H-15 (640/650 G4)</a></li>
+                                <li><a data-value="Perceptor 1.0 (455 G5)">Perceptor 1.0 (455 G5)</a></li>
+                                <li><a data-value="Autobot 2.0 (Pro X360 11 G2)">Autobot 2.0 (Pro X360 11 G2)</a></li>
+                                <li><a data-value="Brando 1.0 (1040 G4)">Brando 1.0 (1040 G4)</a></li>
+                                <li><a data-value="Eastwood 1.0 (X360 1020 G2)">Eastwood 1.0 (X360 1020 G2)</a></li>
+                                <li><a data-value="Ramjat 1.0 (66 Pro G1)">Ramjat 1.0 (66 Pro G1)</a></li>
+                                <li><a data-value="RRRR (430/440/450/470 G5)">RRRR (430/440/450/470 G5)</a></li>
+                                <li><a data-value="Affleck 1.0 (zBook17 G4)">Affleck 1.0 (zBook17 G4)</a></li>
+                                <li><a data-value="Autobot 1.0 (Pro X360 11 G1)">Autobot 1.0 (Pro X360 11 G1)</a></li>
+                                <li><a data-value="Clonney 14/15 (640/650 G3)">Clonney 14/15 (640/650 G3)</a></li>
+                                <li><a data-value="Connery 1.0 (840/850 G4)">Connery 1.0 (840/850 G4)</a></li>
+                                <li><a data-value="Damon 1.0 (zBook 14x2)">Damon 1.0 (zBook 14x2)</a></li>
+                                <li><a data-value="Dunes 4.0 (KBL) (11G3)">Dunes 4.0 (KBL) (11G3)</a></li>
+                                <li><a data-value="Jolie 1.0 (1012X2 G2)">Jolie 1.0 (1012X2 G2)</a></li>
+                                <li><a data-value="Ledger 1.0 (725 G4)">Ledger 1.0 (725 G4)</a></li>
+                                <li><a data-value="Oldman 1.0 (1030 X360 G1)">Oldman 1.0 (1030 X360 G1)</a></li>
+                                <li><a data-value="Pitt 1.0 (455 G4)">Pitt 1.0 (455 G4)</a></li>
+                                <li><a data-value="Redmayne17 1.0 (470 G4)">Redmayne17 1.0 (470 G4)</a></li>
+                                <li><a data-value="Renner15 1.0 (450 G4)">Renner15 1.0 (450 G4)</a></li>
+                                <li><a data-value="Rourke14 1.0 (440 G4)">Rourke14 1.0 (440 G4)</a></li>
+                                <li><a data-value="Reilly13 1.0 (430 G4)">Reilly13 1.0 (430 G4)</a></li>
+                                <li><a data-value="Stallone 1.0 (820 G4)">Stallone 1.0 (820 G4)</a></li>
+                                <li><a data-value="Streep 1.0 (612 G2)">Streep 1.0 (612 G2)</a></li>
+                                <li><a data-value="Travolta 1.0 (745/755 G4)">Travolta 1.0 (745/755 G4)</a></li>
+                                <li><a data-value="2016-Tatum 14/15 (645/655 G3)">2016-Tatum 14/15 (645/655 G3)</a></li>
+                                <li><a data-value="2016-Vaughn 1.0 (zBook15 G4)">2016-Vaughn 1.0 (zBook15 G4)</a></li>
+                                <li><a data-value="2016-Zane 1.0 (zBookS G4)">2016-Zane 1.0 (zBookS G4)</a></li>
+                                <li><a data-value="2015-Aria 1.0 (zbook 17 G3)">2015-Aria 1.0 (zbook 17 G3)</a></li>
+                                <li><a data-value="2015-Bellagio 1.0 (1040 G3)">2015-Bellagio 1.0 (1040 G3)</a></li>
+                                <li><a data-value="2015-Boardwalk 1.0 (1030 G1)">2015-Boardwalk 1.0 (1030 G1)</a></li>
+                                <li><a data-value="2015-Caesars 1.0 (840/850/z15u G3)">2015-Caesars 1.0 (840/850/z15u G3)</a></li>
+                                <li><a data-value="2015-Circus_U 1.0 (640/650 G2))">2015-Circus_U 1.0 (640/650 G2))</a></li>
+                                <li><a data-value="2015-Circus_H 1.0 (640/650 G2)">2015-Circus_H 1.0 (640/650 G2)</a></li>
+                                <li><a data-value="2015-Dunes 3.0 (SKL)(11 G2)">2015-Dunes 3.0 (SKL)(11 G2)</a></li>
+                                <li><a data-value="2015-Eagle 1.0 (608 G1)">2015-Eagle 1.0 (608 G1)</a></li>
+                                <li><a data-value="2015-Encore 1.0 (Folio G1)">2015-Encore 1.0 (Folio G1)</a></li>
+                                <li><a data-value="2015-Galway 1.0 (10EE G1)">2015-Galway 1.0 (10EE G1)</a></li>
+                                <li><a data-value="2015-Ladyluck 1.0 (725 G3)">2015-Ladyluck 1.0 (725 G3)</a></li>
+                                <li><a data-value="2015-Meritage 1.0 (1012 G1)">2015-Meritage 1.0 (1012 G1)</a></li>
+                                <li><a data-value="2015-Palazzo 1.0 (455 G3)">2015-Palazzo 1.0 (455 G3)</a></li>
+                                <li><a data-value="2015-Palazzo_Lite 1.0 (455 G3)">2015-Palazzo_Lite 1.0 (455 G3)</a></li>
+                                <li><a data-value="2015-Rivera 1.0 (470 G3)">2015-Rivera 1.0 (470 G3)</a></li>
+                                <li><a data-value="2015-Regent 1.0 (450 G3)">2015-Regent 1.0 (450 G3)</a></li>
+                                <li><a data-value="2015-Riata 1.0 (440 G3)">2015-Riata 1.0 (440 G3)</a></li>
+                                <li><a data-value="2015-Royal 1.0 (430 G3)">2015-Royal 1.0 (430 G3)</a></li>
+                                <li><a data-value="2015-Treature Island 1.0 (745/755 G3)">2015-Treature Island 1.0 (745/755 G3)</a></li>
+                                <li><a data-value="2015-Tropicana 1.0 (645/655 G2)">2015-Tropicana 1.0 (645/655 G2)</a></li>
+                                <li><a data-value="2015-Sands 1.0 (820 G3)">2015-Sands 1.0 (820 G3)</a></li>
+                                <li><a data-value="2015-Venetian 1.0 (zBook 15 G3)">2015-Venetian 1.0 (zBook 15 G3)</a></li>
+                                <li><a data-value="2015-Zoltar 1.0 (zBookStudio G3)">2015-Zoltar 1.0 (zBookStudio G3)</a></li>
+                                <li><a data-value="2014-BazookaJR 1.0 (1020 G1)">2014-BazookaJR 1.0 (1020 G1)</a></li>
+                                <li><a data-value="2014-Bandit 2.0 (9680m)">2014-Bandit 2.0 (9680m)</a></li>
+                                <li><a data-value="2014-Reeses 1.0 (450 G2)">2014-Reeses 1.0 (450 G2)</a></li>
+                                <li><a data-value="2014-Olympia 1.0 (1011 G1)">2014-Olympia 1.0 (1011 G1)</a></li>
+                                <li><a data-value="2014-Tootsie 14/15 (745/755 G2)">2014-Tootsie 14/15 (745/755 G2)</a></li>
+                                <li><a data-value="2013-Chiclet 14/15 (840/850 G2)">2013-Chiclet 14/15 (840/850 G2)</a></li>
+                                <li><a data-value="2013-Comet 14/15 (840/850 G1)">2013-Comet 14/15 (840/850 G1)</a></li>
+                                <li><a data-value="2013-Switchback (820 G1)">2013-Switchback (820 G1)</a></li>
+                                <li><a data-value="2013-Astro 2 (Elite Pad 1000)">2013-Astro 2 (Elite Pad 1000)</a></li>
+                                <li><a data-value="2012-Astro 1 (Elite Pad 900)">2012-Astro 1 (Elite Pad 900)</a></li>
+                              </ul>
+                              <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Phase</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <div class="input-group dropdown">
+                              <input type="text" class="form-control dropdown-toggle dash_phase" value="" placeholder="SI" style="border-radius: 0px" name="dash_phase" id="dash_phase">
+                              <ul class="dropdown-menu">
+                                <li><a data-value="SI">SI</a></li>
+                                <li><a data-value="PV">PV</a></li>
+                                <li><a data-value="MV">MV</a></li>
+                              </ul>
+                              <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">OS</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <div class="input-group dropdown">
+                              <input type="text" class="form-control dropdown-toggle dash_os" value="" placeholder="Windows10, 64bit" style="border-radius: 0px" id="dash_OS" name="dash_OS">
+                              <ul class="dropdown-menu">
+                                <li><a data-value="Windows7, 32bit">Windows7, 32bit</a></li>
+                                <li><a data-value="Windows7, 64bit">Windows7, 64bit</a></li>
+                                <li><a data-value="Windows8, 64bit">Windows8, 64bit</a></li>
+                                <li><a data-value="Windows8.1, 64bit">Windows8.1, 64bit</a></li>
+                                <li><a data-value="Windows10, 64bit">Windows10, 64bit</a></li> 
+                              </ul>
+                              <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Language</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <div class="input-group dropdown">
+                              <input type="text" class="form-control dropdown-toggle dash_language" value="" placeholder="US#ABA 英文" style="border-radius: 0px" id="dash_language" name="dash_language">
+                              <ul class="dropdown-menu">
+                                <li><a data-value="US#ABA 英文">US#ABA 英文</a></li>
+                                <li><a data-value="TW#AB0 繁體中文">TW#AB0 繁體中文</a></li>
+                                <li><a data-value="PRC#AB2 簡體中文">PRC#AB2 簡體中文</a></li>
+                                <li><a data-value="JP#ABJ 日文">JP#ABJ 日文</a></li>
+                                <li><a data-value="其他:">其他:</a></li>
+                              </ul>
+                              <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Is there any password? If there is, Password:</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <input class=form-control name="dash_set_password" id="dash_set_password" type="text" placeholder="Password" step=1 min=0>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Issue</label>
+                    <div class=col-md-12>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <input class=form-control name="dash_issue" id="dash_issue" type="text" placeholder="ex. Cannot open the unit" step=1 min=0>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div id= "update_bios_part" style="display: none">
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Project Name</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <div class="input-group dropdown">
+                              <input type="text" class="form-control dropdown-toggle bios_project_name" value="" placeholder="Bumblebee 1.0 (EliteBook 1030 G3)" style="border-radius: 0px" name="bios_project_name" id="bios_project_name">
+                              <ul class="dropdown-menu" style=" height:200px; overflow: scroll;">
+                                <li><a data-value="Other">Other</a></li>
+                                <li><a data-value="Armorhide 1.0 (zBook17 G5)">Armorhide 1.0 (zBook17 G5)</a></li>
+                                <li><a data-value="Vortex 1.0 (zBook15 G5)">Vortex 1.0 (zBook15 G5)</a></li>
+                                <li><a data-value="Zigzag 1.0 (zBookS15 G5)">Zigzag 1.0 (zBookS15 G5)</a></li>
+                                <li><a data-value="Bumblebee 1.0 (EliteBook 1030 G3)">Bumblebee 1.0 (EliteBook 1030 G3)</a></li>
+                                <li><a data-value="Megatron 1.0 (1013 G3)">Megatron 1.0 (1013 G3)</a></li>
+                                <li><a data-value="Blurr">Blurr</a></li>
+                                <li><a data-value="Rumble">Rumble</a></li>
+                                <li><a data-value="Cannonball">Cannonball</a></li>
+                                <li><a data-value="Computron 14/14W/15 (840/z14u/850 G5)">Computron 14/14W/15 (840/z14u/850 G5)</a></li>
+                                <li><a data-value="Skyfire 1.0 (830 G5)">Skyfire 1.0 (830 G5)</a></li>
+                                <li><a data-value="FirstAid 1.0 (840 G5 HC)">FirstAid 1.0 (840 G5 HC)</a></li>
+                                <li><a data-value="Cybertron 1.0(840r G4)">Cybertron 1.0(840r G4)</a></li>
+                                <li><a data-value="Tetris (AMD)">Tetris (AMD)</a></li>
+                                <li><a data-value="Longhaul 1.0 (735 G5)">Longhaul 1.0 (735 G5)</a></li>
+                                <li><a data-value="Trypticon 14/15 (745/755 G5)">Trypticon 14/15 (745/755 G5)</a></li>
+                                <li><a data-value="Tracks 14 1.0 (645 G4)">Tracks 14 1.0 (645 G4)</a></li>
+                                <li><a data-value="Chromia-U 14/15/H-15 (640/650 G4)">Chromia-U 14/15/H-15 (640/650 G4)</a></li>
+                                <li><a data-value="Perceptor 1.0 (455 G5)">Perceptor 1.0 (455 G5)</a></li>
+                                <li><a data-value="Autobot 2.0 (Pro X360 11 G2)">Autobot 2.0 (Pro X360 11 G2)</a></li>
+                                <li><a data-value="Brando 1.0 (1040 G4)">Brando 1.0 (1040 G4)</a></li>
+                                <li><a data-value="Eastwood 1.0 (X360 1020 G2)">Eastwood 1.0 (X360 1020 G2)</a></li>
+                                <li><a data-value="Ramjat 1.0 (66 Pro G1)">Ramjat 1.0 (66 Pro G1)</a></li>
+                                <li><a data-value="RRRR (430/440/450/470 G5)">RRRR (430/440/450/470 G5)</a></li>
+                                <li><a data-value="Affleck 1.0 (zBook17 G4)">Affleck 1.0 (zBook17 G4)</a></li>
+                                <li><a data-value="Autobot 1.0 (Pro X360 11 G1)">Autobot 1.0 (Pro X360 11 G1)</a></li>
+                                <li><a data-value="Clonney 14/15 (640/650 G3)">Clonney 14/15 (640/650 G3)</a></li>
+                                <li><a data-value="Connery 1.0 (840/850 G4)">Connery 1.0 (840/850 G4)</a></li>
+                                <li><a data-value="Damon 1.0 (zBook 14x2)">Damon 1.0 (zBook 14x2)</a></li>
+                                <li><a data-value="Dunes 4.0 (KBL) (11G3)">Dunes 4.0 (KBL) (11G3)</a></li>
+                                <li><a data-value="Jolie 1.0 (1012X2 G2)">Jolie 1.0 (1012X2 G2)</a></li>
+                                <li><a data-value="Ledger 1.0 (725 G4)">Ledger 1.0 (725 G4)</a></li>
+                                <li><a data-value="Oldman 1.0 (1030 X360 G1)">Oldman 1.0 (1030 X360 G1)</a></li>
+                                <li><a data-value="Pitt 1.0 (455 G4)">Pitt 1.0 (455 G4)</a></li>
+                                <li><a data-value="Redmayne17 1.0 (470 G4)">Redmayne17 1.0 (470 G4)</a></li>
+                                <li><a data-value="Renner15 1.0 (450 G4)">Renner15 1.0 (450 G4)</a></li>
+                                <li><a data-value="Rourke14 1.0 (440 G4)">Rourke14 1.0 (440 G4)</a></li>
+                                <li><a data-value="Reilly13 1.0 (430 G4)">Reilly13 1.0 (430 G4)</a></li>
+                                <li><a data-value="Stallone 1.0 (820 G4)">Stallone 1.0 (820 G4)</a></li>
+                                <li><a data-value="Streep 1.0 (612 G2)">Streep 1.0 (612 G2)</a></li>
+                                <li><a data-value="Travolta 1.0 (745/755 G4)">Travolta 1.0 (745/755 G4)</a></li>
+                                <li><a data-value="2016-Tatum 14/15 (645/655 G3)">2016-Tatum 14/15 (645/655 G3)</a></li>
+                                <li><a data-value="2016-Vaughn 1.0 (zBook15 G4)">2016-Vaughn 1.0 (zBook15 G4)</a></li>
+                                <li><a data-value="2016-Zane 1.0 (zBookS G4)">2016-Zane 1.0 (zBookS G4)</a></li>
+                                <li><a data-value="2015-Aria 1.0 (zbook 17 G3)">2015-Aria 1.0 (zbook 17 G3)</a></li>
+                                <li><a data-value="2015-Bellagio 1.0 (1040 G3)">2015-Bellagio 1.0 (1040 G3)</a></li>
+                                <li><a data-value="2015-Boardwalk 1.0 (1030 G1)">2015-Boardwalk 1.0 (1030 G1)</a></li>
+                                <li><a data-value="2015-Caesars 1.0 (840/850/z15u G3)">2015-Caesars 1.0 (840/850/z15u G3)</a></li>
+                                <li><a data-value="2015-Circus_U 1.0 (640/650 G2))">2015-Circus_U 1.0 (640/650 G2))</a></li>
+                                <li><a data-value="2015-Circus_H 1.0 (640/650 G2)">2015-Circus_H 1.0 (640/650 G2)</a></li>
+                                <li><a data-value="2015-Dunes 3.0 (SKL)(11 G2)">2015-Dunes 3.0 (SKL)(11 G2)</a></li>
+                                <li><a data-value="2015-Eagle 1.0 (608 G1)">2015-Eagle 1.0 (608 G1)</a></li>
+                                <li><a data-value="2015-Encore 1.0 (Folio G1)">2015-Encore 1.0 (Folio G1)</a></li>
+                                <li><a data-value="2015-Galway 1.0 (10EE G1)">2015-Galway 1.0 (10EE G1)</a></li>
+                                <li><a data-value="2015-Ladyluck 1.0 (725 G3)">2015-Ladyluck 1.0 (725 G3)</a></li>
+                                <li><a data-value="2015-Meritage 1.0 (1012 G1)">2015-Meritage 1.0 (1012 G1)</a></li>
+                                <li><a data-value="2015-Palazzo 1.0 (455 G3)">2015-Palazzo 1.0 (455 G3)</a></li>
+                                <li><a data-value="2015-Palazzo_Lite 1.0 (455 G3)">2015-Palazzo_Lite 1.0 (455 G3)</a></li>
+                                <li><a data-value="2015-Rivera 1.0 (470 G3)">2015-Rivera 1.0 (470 G3)</a></li>
+                                <li><a data-value="2015-Regent 1.0 (450 G3)">2015-Regent 1.0 (450 G3)</a></li>
+                                <li><a data-value="2015-Riata 1.0 (440 G3)">2015-Riata 1.0 (440 G3)</a></li>
+                                <li><a data-value="2015-Royal 1.0 (430 G3)">2015-Royal 1.0 (430 G3)</a></li>
+                                <li><a data-value="2015-Treature Island 1.0 (745/755 G3)">2015-Treature Island 1.0 (745/755 G3)</a></li>
+                                <li><a data-value="2015-Tropicana 1.0 (645/655 G2)">2015-Tropicana 1.0 (645/655 G2)</a></li>
+                                <li><a data-value="2015-Sands 1.0 (820 G3)">2015-Sands 1.0 (820 G3)</a></li>
+                                <li><a data-value="2015-Venetian 1.0 (zBook 15 G3)">2015-Venetian 1.0 (zBook 15 G3)</a></li>
+                                <li><a data-value="2015-Zoltar 1.0 (zBookStudio G3)">2015-Zoltar 1.0 (zBookStudio G3)</a></li>
+                                <li><a data-value="2014-BazookaJR 1.0 (1020 G1)">2014-BazookaJR 1.0 (1020 G1)</a></li>
+                                <li><a data-value="2014-Bandit 2.0 (9680m)">2014-Bandit 2.0 (9680m)</a></li>
+                                <li><a data-value="2014-Reeses 1.0 (450 G2)">2014-Reeses 1.0 (450 G2)</a></li>
+                                <li><a data-value="2014-Olympia 1.0 (1011 G1)">2014-Olympia 1.0 (1011 G1)</a></li>
+                                <li><a data-value="2014-Tootsie 14/15 (745/755 G2)">2014-Tootsie 14/15 (745/755 G2)</a></li>
+                                <li><a data-value="2013-Chiclet 14/15 (840/850 G2)">2013-Chiclet 14/15 (840/850 G2)</a></li>
+                                <li><a data-value="2013-Comet 14/15 (840/850 G1)">2013-Comet 14/15 (840/850 G1)</a></li>
+                                <li><a data-value="2013-Switchback (820 G1)">2013-Switchback (820 G1)</a></li>
+                                <li><a data-value="2013-Astro 2 (Elite Pad 1000)">2013-Astro 2 (Elite Pad 1000)</a></li>
+                                <li><a data-value="2012-Astro 1 (Elite Pad 900)">2012-Astro 1 (Elite Pad 900)</a></li>
+                              </ul>
+                              <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Phase</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <div class="input-group dropdown">
+                              <input type="text" class="form-control dropdown-toggle bios_phase" value="" placeholder="SI" style="border-radius: 0px" name="bios_phase" id="bios_phase">
+                              <ul class="dropdown-menu">
+                                <li><a data-value="SI">SI</a></li>
+                                <li><a data-value="PV">PV</a></li>
+                                <li><a data-value="MV">MV</a></li>
+                              </ul>
+                              <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">BIOS Version</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <div class="input-group dropdown">
+                              <input type="text" class="form-control dropdown-toggle bios_bios_version" value="" placeholder="Latest" style="border-radius: 0px" name="bios_bios_version" id="bios_bios_version">
+                              <ul class="dropdown-menu">
+                                <li><a data-value="Latest">Latest</a></li>
+                                <li><a data-value="RTM">RTM</a></li>
+                                <li><a data-value="">Fill In by yourself</a></li>
+                              </ul>
+                              <span role="button" class="input-group-addon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Is there any password? If there is, Password:</label>
+                    <div class=col-md-10>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <input class=form-control name="bios_set_password" id="bios_set_password" type="text" placeholder="Password" step=1 min=0>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-form-label col-md-2">Issue</label>
+                    <div class=col-md-12>
+                      <div class="form-inline">
+                        <div class="form-group mx-2">
+                          <div class=input-group>
+                            <span class=input-group-addon></span>
+                            <input class=form-control name="bios_issue" id="bios_issue" type="text" placeholder="ex. Cannot open the unit" step=1 min=0>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+
+
+
+                </div>
+                <div class="modal-footer" style="display: none;" id="modal-footer">
+                  <button type="submit" class="btn btn-primary" id="send_borrow_request" onclick="onclick_B_D_Request();">Send Request</button>
                 </div>
               </div>
             </div>
             </form>
-          </div>
-          <input type="button" class="btn" data-toggle="modal" data-target="#fjFilterModal" value="B & D Request" id="submit_borrow" onclick="onclick_B_D_Request();" />
+          
+          
         
     </div>
 
@@ -278,52 +745,125 @@
 
 
 <script type="text/javascript">
+ 
   function onclick_B_D_Request(){
     document.getElementById("fill_in_datetime").value = new Date().toLocaleString();
-    console.log(new Date().toLocaleString());
+    //console.log(new Date().toLocaleString());
+  }
+
+  function onclick_dash_image(){
+    document.getElementById("update_bios_part").style.display = "none";
+    document.getElementById("dash_image_part").style.display = "";
+    document.getElementById("both_part").style.display = "none";
+    document.getElementById("requirement").value = "Dash Image";
+    document.getElementById("modal-footer").style.display = "";
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.dash_project_name')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.dash_phase')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.dash_os')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.dash_language')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+  }
+
+  function onclick_update_bios(){
+    document.getElementById("update_bios_part").style.display = "";
+    document.getElementById("dash_image_part").style.display = "none";
+    document.getElementById("both_part").style.display = "none";
+    document.getElementById("requirement").value = "Update BIOS";
+    document.getElementById("modal-footer").style.display = "";
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.bios_project_name')
+        .val( $(this).attr('data-value'));
+      });
+    });
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.bios_phase')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.bios_bios_version')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+  }
+
+  function onclick_both(){
+    document.getElementById("update_bios_part").style.display = "none";
+    document.getElementById("dash_image_part").style.display = "none";
+    document.getElementById("both_part").style.display = "";
+    document.getElementById("requirement").value = "Dash Image & Update BIOS";
+    document.getElementById("modal-footer").style.display = "";
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.both_project_name')
+        .val( $(this).attr('data-value'));
+      });
+    });
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.both_phase')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.both_bios_version')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.both_os')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.both_language')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
   }
   
-
   $(function() {
-  $('.dropdown-menu a').click(function() {
-    $(this).closest('.dropdown').find('input.department')
-      .val( $(this).attr('data-value'));
-  });
-});
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.department')
+        .val( $(this).attr('data-value'));
+      });
+    });
 
-  $(function() {
-  $('.dropdown-menu a').click(function() {
-    $(this).closest('.dropdown').find('input.project_name')
-      .val( $(this).attr('data-value'));
-  });
-});
 
-  $(function() {
-  $('.dropdown-menu a').click(function() {
-    $(this).closest('.dropdown').find('input.phase')
-      .val( $(this).attr('data-value'));
-  });
-});
-
-  $(function() {
-  $('.dropdown-menu a').click(function() {
-    $(this).closest('.dropdown').find('input.bios_version')
-      .val( $(this).attr('data-value'));
-  });
-});
-
-  $(function() {
-  $('.dropdown-menu a').click(function() {
-    $(this).closest('.dropdown').find('input.os')
-      .val( $(this).attr('data-value'));
-  });
-});
-
-  $(function() {
-  $('.dropdown-menu a').click(function() {
-    $(this).closest('.dropdown').find('input.language')
-      .val( $(this).attr('data-value'));
-  });
-});
 </script>
 </html>

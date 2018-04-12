@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>IUR System</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/static/js/jquery.particles.js"></script>
+  <script type="text/javascript" src="/static/js/jquery.particles.min.js"></script> 
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 10px;
+      border-radius: 0;
+    }
+    
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+    
+  .carousel-inner img {
+      width: 100%; /* Set width to 100% */
+      margin: auto;
+      min-height:200px;
+  }
+
+  /* Hide the carousel text when the screen is less than 600 pixels wide */
+  @media (max-width: 600px) {
+    .carousel-caption {
+      display: none; 
+    }
+  }
+
+    .jumbotron {
+      padding: 50px 50px 50px 20px;
+    }
+
+  .wrapper {
+    position: relative;
+  }
+
+  .overlay {
+    position: absolute;
+    top: 20%;
+    left: 5%;
+    bottom: 0;
+    right: 0;
+    color: white;
+  }
+
+  </style>
+</head>
+<body style="background: rgba(19,36,46,1)">
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="/index/">Home</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/index">Home</a></li>
+        <li><a href="/b_d_request/send_request">Send Dash Request</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/logout/"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="wrapper">
+  <canvas class="canvas" width="100%" height="100%"></canvas>
+  <div class="overlay">
+    <div class="container" style="color: white;">
+      <div className="row">
+        <div className="col-md-12">
+          <div className="jumbotron">
+            <h1>Hello, welcome to IUR System!</h1>
+            <p style="display: inline;"><a class="btn btn-info btn-lg" href="/b_d_request/send_request" role="button">Apply for Dash Request</a></p>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+<script type="text/javascript">
+  $('.canvas').particles();
+$('.canvas').particles({
+maxParticles: 100,
+size: 3,
+speed: 0.5,
+color: '#FFFFFF',
+minDist: 140,
+connectParticles: false
+});
+
+</script>
+</html>

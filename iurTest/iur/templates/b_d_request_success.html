@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>IUR System</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+    
+  .carousel-inner img {
+      width: 100%; /* Set width to 100% */
+      margin: auto;
+      min-height:200px;
+  }
+
+  .th 
+
+  /* Hide the carousel text when the screen is less than 600 pixels wide */
+  @media (max-width: 600px) {
+    .carousel-caption {
+      display: none; 
+    }
+  }
+
+    .jumbotron {
+      padding: 50px 50px 50px 20px;
+    }
+
+
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="/b_d_request/send_request/">Send Dash Request</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="/index">Home</a></li>
+        <li class="active"><a href="/b_d_request/send_request">Send Dash Request</a></li>
+        <li><a href="/b_d_request/list">Dash Request List</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/logout/"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container" style="margin: 10px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div  style="margin-left:15px;"><h4>Thank you for your application!!!</h4></div>
+        <div  style="margin-left:15px;"><h5>Your request has been processed...</h5></div>
+        <div><a class="btn btn-info" role="button" href='/b_d_request/send_request' style="margin-left:15px;">Back to apply for a new request</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+
+
+<script type="text/javascript">
+ 
+  function onclick_B_D_Request(){
+    document.getElementById("fill_in_datetime").value = new Date().toLocaleString();
+    //console.log(new Date().toLocaleString());
+  }
+
+  function onclick_dash_image(){
+    document.getElementById("update_bios_part").style.display = "none";
+    document.getElementById("dash_image_part").style.display = "";
+    document.getElementById("both_part").style.display = "none";
+    document.getElementById("requirement").value = "Dash Image";
+    document.getElementById("modal-footer").style.display = "";
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.dash_project_name')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.dash_phase')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.dash_os')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.dash_language')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+  }
+
+  function onclick_update_bios(){
+    document.getElementById("update_bios_part").style.display = "";
+    document.getElementById("dash_image_part").style.display = "none";
+    document.getElementById("both_part").style.display = "none";
+    document.getElementById("requirement").value = "Update BIOS";
+    document.getElementById("both_part").style.display = "none";
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.bios_project_name')
+        .val( $(this).attr('data-value'));
+      });
+    });
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.bios_phase')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.bios_bios_version')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+  }
+
+  function onclick_both(){
+    document.getElementById("update_bios_part").style.display = "none";
+    document.getElementById("dash_image_part").style.display = "none";
+    document.getElementById("both_part").style.display = "";
+    document.getElementById("requirement").value = "Dash Image & Update BIOS";
+    document.getElementById("both_part").style.display = "none";
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.both_project_name')
+        .val( $(this).attr('data-value'));
+      });
+    });
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.both_phase')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.both_bios_version')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.both_os')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+    $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.both_language')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+  }
+  
+  $(function() {
+      $('.dropdown-menu a').click(function() {
+      $(this).closest('.dropdown').find('input.department')
+        .val( $(this).attr('data-value'));
+      });
+    });
+
+
+</script>
+</html>

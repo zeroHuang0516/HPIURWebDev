@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>IUR Test System</title>
+  <title>IUR System</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -124,30 +124,80 @@
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
         <li><a href="/index">Home</a></li>
-        <li><a href="/units/list">Units</a></li>
-        <li><a href="/units/checkin">Units CheckIn</a></li>
-        <li><a href="/units/borrow">Search & Borrow</a></li>
         <li><a href="/b_d_request/send_request">Send Dash Request</a></li>
         <li class="active"><a href="/b_d_request/list">Dash Request List</a></li>
-        <li><a href="#">Send Email</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        <li><a href="/logout/"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
       </ul>
     </div>
   </div>
 </nav>
+
+
+<!-- Modal -->
+<div class="modal fade" id="downloadModal">
+  <form enctype="multipart/form-data" action="/report_down_load/" method="post">
+    {% csrf_token %}
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Please set the required time slot</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group row">
+          <label class="col-form-label col-md-2" >FROM</label>
+          <div class=col-md-10>
+            <div class="form-inline">
+              <div class="form-group mx-2">
+                <input class="form-control" type="date" name="from_datetime" id="from_datetime"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-form-label col-md-2" >TO</label>
+          <div class=col-md-10>
+            <div class="form-inline">
+              <div class="form-group mx-2">
+                <input class="form-control" type="date" name="to_datetime" id="to_datetime"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-secondary" id="download_close" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" onclick="onclick_submit_download();">Submit</button>
+      </div>
+    </div>
+  </div>
+  </form>
+</div>
+
+
+
+
 <div class="container-fluid">
   <div class="row">
       <div class="col-md-12">
+          <div>
+            <button type="button" class="btn btn-default" id="display_all" style=" margin-top: 5px; width:200px;" onclick="onclick_display_all();">All</button>
+            <button type="button" class="btn btn-default" id="display_dash" style=" margin-top: 5px; width:200px;" onclick="onclick_display_dash();">Dash Image</button>
+            <button type="button" class="btn btn-default" id="display_bios" style=" margin-top: 5px; width:200px;" onclick="onclick_display_bios();">Update BIOS</button>
+            <button type="button" class="btn btn-default" id="display_both" style=" margin-top: 5px; width:200px;" onclick="onclick_display_both();">Dash Image & Update BIOS</button>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#downloadModal" style=" margin-top: 5px; width:200px;">Download Excel Report</button>
+          </div>
           <table class="table table-condensed table-hover table-striped" width="647" id="units_list" style="margin-top: 10px">
             <thead>
               <tr id="units_list_title_bar" style="display: none">
                 <th>#</th>
                 <th>Pick Up</th>
+                <th>Send Email</th>
                 <th>Fill in Datetime</th>
                 <th>Applicant's Email</th>
                 <th>Department</th>
+                <th>Requirement</th>
                 <th>Project Name</th>
                 <th>Phase</th>
                 <th>BIOS Version</th>
@@ -157,15 +207,16 @@
                 <th>Status</th>
                 <th></th>
                 <th></th>
-                <th>Upgrade</th>
+                <th></th>
+                <th>Close</th>
               </tr>
             </thead>
             <tbody id="table-body">
 
-</tbody>
-</table>
+            </tbody>
+          </table>
         </div>
-</div>
+  </div>
 </body>
 <script type="text/javascript">
   function getCookie(name) {  
@@ -198,53 +249,137 @@ $.ajaxSetup({
 });
 
   $("body").on("click", ".fail", function () {
+         $.post("/b_d_request/list/",
+        {
+          fill_in_datetime: $(this).closest("tr").find("td:eq(3)").text(),
+          status: 'Fail',
+        },
+        function(data,status){
+            
+        });
         if($(this).closest("tr").css("background-color") != "rgba(235, 0, 0, 0.5)"){
           $(this).closest("tr").css("background-color","rgba(235, 0, 0, 0.5)");
-        }
-        else{
-          $(this).closest("tr").css("background-color","");
+          $(this).closest("tr").css("text-decoration","");
         }
     });
 
   $("body").on("click", ".in_progress", function () {
+         $.post("/b_d_request/list/",
+        {
+          fill_in_datetime: $(this).closest("tr").find("td:eq(3)").text(),
+          status: 'In Progress',
+        },
+        function(data,status){
+            
+        });
         if($(this).closest("tr").css("background-color") != "rgba(54, 162, 235, 0.2)"){
           $(this).closest("tr").css("background-color","rgba(54, 162, 235, 0.2)");
+          $(this).closest("tr").css("text-decoration","");
         }
-        else{
-          $(this).closest("tr").css("background-color","");
+    });
+
+  $("body").on("click", ".reset", function () {
+         $.post("/b_d_request/list/",
+        {
+          fill_in_datetime: $(this).closest("tr").find("td:eq(3)").text(),
+          status: 'Initial',
+        },
+        function(data,status){
+            
+        });
+        if($(this).closest("tr").css("background-color") != "white"){
+          $(this).closest("tr").css("background-color","white");
+          $(this).closest("tr").css("text-decoration","");
         }
+    });
+
+  function Mymsg(msg,duration)
+  {
+    var alt = document.createElement("div");
+    alt.setAttribute("style","position:absolute;top:45%;left:42%;background-color:#0080ff;color:white; padding:10px 24px;");
+    alt.innerHTML = msg;
+    setTimeout(function(){
+    alt.parentNode.removeChild(alt);
+     },duration);
+    document.body.appendChild(alt);
+  }
+
+  $("body").on("click", ".send", function () {
+         $.post("/send_email/",
+        {
+          platform: $(this).closest("tr").find("td:eq(7)").text(),
+          email_adr: $(this).closest("tr").find("td:eq(4)").text(),
+          requirement: $(this).closest("tr").find("td:eq(6)").text(),
+          fill_in_datetime: $(this).closest("tr").find("td:eq(3)").text(),
+          press_send_btn_time: new Date().toLocaleString(),
+        },
+        function(data,status){
+            Mymsg('The email has been sent successfully!!!',2000);
+        });
     });
 
   $("body").on("click", ".completed", function () {
+         $.post("/b_d_request/list/",
+        {
+          fill_in_datetime: $(this).closest("tr").find("td:eq(3)").text(),
+          status: 'Completed',
+        },
+        function(data,status){
+            
+        });
         if($(this).closest("tr").css("background-color") != "rgba(255, 206, 86, 0.5)"){
           $(this).closest("tr").css("background-color","rgba(255, 206, 86, 0.5)");
-        }
-        else{
-          $(this).closest("tr").css("background-color","");
+          $(this).closest("tr").css("text-decoration","");
+          $(this).closest("tr").find("td:eq(1)").find('check_input').attr("checked","checked");
+          console.log($(this).closest("tr").find("td:eq(1)").find('label').find('input').find('check_input').attr('checked'));
         }
     });
 
-  $("body").on("click", ".remove", function () {
+  $("body").on("click", ".finished", function () {
          $.post("/b_d_request/list/",
         {
-          fill_in_datetime: $(this).closest("tr").find("td:eq(2)").text(),
+          fill_in_datetime: $(this).closest("tr").find("td:eq(3)").text(),
+          status: 'Close',
         },
         function(data,status){
             
         });
         $(this).closest("tr").remove();
+        window.location.href = window.location.href.replace( /[\?#].*|$/, "?restart" );
+        location.reload();
+
+        $(document).ready(function () {
+    if (window.location.search.indexOf('restart') > -1) {
+    setTimeout(function () { 
+        $('#display_all').click();
+        }, 3000);
+ };
+        
+             
+       
+        
     });
 
+
+});
+
+
+
   $("body").on("click", ".check_input", function () {
+         $.post("/b_d_request/list/",
+        {
+          fill_in_datetime: $(this).closest("tr").find("td:eq(3)").text(),
+          status: 'Picked Up',
+        },
+        function(data,status){
+            
+        });
         if($(this).is(":checked")){
           $(this).closest("tr").css("text-decoration","line-through");
           $(this).closest("tr").css("background-color","rgba(107, 107, 107, 0.5)");
         }
-        else{
-          $(this).closest("tr").css("text-decoration","");
-          $(this).closest("tr").css("background-color","");
-        }
     });
+
 
   var uList = JSON.parse("{{list_data|escapejs}}");
   console.log(uList);
@@ -255,20 +390,42 @@ $.ajaxSetup({
   var numOfAvailableUnits = 0;
   
 
-    document.getElementById('units_list_title_bar').style.display="";
-    var Table = document.getElementById('units_list');
-    var tableRows = Table.getElementsByTagName('tr');
-    var RowCounts = tableRows.length; 
-    console.log(RowCounts);
-    for (var x=RowCounts-1; x>0; x--){
-      Table.deleteRow(x)
-    }
+  document.getElementById('units_list_title_bar').style.display="";
+    
 
-
-    for (var idx = 0; idx<uList.length; idx++){
-        if(uList[idx].status == "Not YET"){
+    function onclick_display_both(){
+      var Table = document.getElementById('units_list');
+      var tableRows = Table.getElementsByTagName('tr');
+      var RowCounts = tableRows.length; 
+      console.log(RowCounts);
+      for (var x=RowCounts-1; x>0; x--){
+        Table.deleteRow(x)
+      }
+      for (var idx = 0; idx<uList.length; idx++){
+        if(uList[idx].requirement == "Dash Image & Update BIOS" & uList[idx].status != 'Close'){
             var newRow   = tableRef.insertRow(tableRef.rows.length);
-            for (var i = 0; i < 15; i++){
+            if(uList[idx].status == "In Progress"){
+              newRow.style.backgroundColor = "rgba(54, 162, 235, 0.2)";
+              newRow.style.textDecoration = "";
+            }
+            else if(uList[idx].status == "Fail"){
+              newRow.style.backgroundColor = "rgba(235, 0, 0, 0.5)";
+              newRow.style.textDecoration = "";
+            }
+            else if(uList[idx].status == "Completed"){
+              newRow.style.backgroundColor = "rgba(255, 206, 86, 0.5)";
+              newRow.style.textDecoration = "";
+            }
+            else if(uList[idx].status == "Initial"){
+              newRow.style.backgroundColor = "white";
+              newRow.style.textDecoration = "";
+            }
+            else if(uList[idx].status == "Picked Up"){
+              newRow.style.backgroundColor = "rgba(107, 107, 107, 0.5)";
+              newRow.style.textDecoration = "line-through";
+            }
+
+            for (var i = 0; i < 18; i++){
                 var newCell = newRow.insertCell(i);
                 var newText;
                 switch(i){
@@ -280,7 +437,12 @@ $.ajaxSetup({
                       newText.className = "check_container";
                       newInput = document.createElement('input');
                       newInput.type="checkbox";
-                      newInput.checked="";
+                      if(uList[idx].status == "Picked Up"){
+                        newInput.checked="checked";
+                      }
+                      else{
+                        newInput.checked="";
+                      }
                       newInput.className = "check_input";
                       newSpan = document.createElement('checkmark');
                       newSpan.className = "checkmark";
@@ -288,55 +450,71 @@ $.ajaxSetup({
                       newText.appendChild(newSpan);
                       break;
                   case 2:
-                      newText = document.createTextNode(uList[idx].fill_in_datetime);
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-primary send";
+                      newText.id = "send_btn";
+                      newText.innerHTML = "Send";
                       break;
                   case 3:
-                      newText = document.createTextNode(uList[idx].applicant_email);
+                      newText = document.createTextNode(uList[idx].fill_in_datetime);
                       break;
                   case 4:
-                      newText = document.createTextNode(uList[idx].department);
+                      newText = document.createTextNode(uList[idx].applicant_email);
                       break;
                   case 5:
-                      newText = document.createTextNode(uList[idx].project_name);
+                      newText = document.createTextNode(uList[idx].department);
                       break;
                   case 6:
-                      newText = document.createTextNode(uList[idx].phase);
+                      newText = document.createTextNode(uList[idx].requirement);
                       break;
                   case 7:
-                      newText = document.createTextNode(uList[idx].bios_version);
+                      newText = document.createTextNode(uList[idx].project_name);
                       break;
                   case 8:
-                      newText = document.createTextNode(uList[idx].os);
+                      newText = document.createTextNode(uList[idx].phase);
                       break;
                   case 9:
-                      newText = document.createTextNode(uList[idx].language);
+                      newText = document.createTextNode(uList[idx].bios_version);
                       break;
                   case 10:
-                      newText = document.createTextNode(uList[idx].issue);
+                      newText = document.createTextNode(uList[idx].os);
                       break;
                   case 11:
+                      newText = document.createTextNode(uList[idx].language);
+                      break;
+                  case 12:
+                      newText = document.createTextNode(uList[idx].issue);
+                      break;
+                  case 13:
                       newText = document.createElement('button');
                       newText.className = "btn btn-info in_progress";
                       newText.id = "in_progress_btn";
                       newText.innerHTML = "In Progress";
                       break;
-                  case 12:
+                  case 14:
                       newText = document.createElement('button');
                       newText.className = "btn btn-danger fail";
                       newText.id = "fail_btn";
                       newText.innerHTML = "Fail";
                       break;
-                  case 13:
+                  case 15:
                       newText = document.createElement('button');
                       newText.className = "btn btn-warning completed";
                       newText.id = "completed_btn";
                       newText.innerHTML = "Completed";
                       break;
-                  case 14:
+                  case 16:
                       newText = document.createElement('button');
-                      newText.className = "btn btn-primary remove";
-                      newText.id = "remove_btn";
-                      newText.innerHTML = "Remove";
+                      newText.className = "btn btn-success reset";
+                      newText.id = "reset_btn";
+                      newText.innerHTML = "Reset";
+                      break;
+                  case 17:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-basic finished";
+                      newText.id = "close_btn";
+                      newText.style ="background-color: black;color:white;"
+                      newText.innerHTML = "Close";
                       break;
                   default:
                       break;
@@ -345,8 +523,416 @@ $.ajaxSetup({
             }
         }
         
+      }
+    }
+
+    function onclick_display_all(){
+      var Table = document.getElementById('units_list');
+      var tableRows = Table.getElementsByTagName('tr');
+      var RowCounts = tableRows.length; 
+      console.log(RowCounts);
+      for (var x=RowCounts-1; x>0; x--){
+        Table.deleteRow(x)
+      }
+      for (var idx = 0; idx<uList.length; idx++){
+        if(uList[idx].status != 'Close'){
+            var newRow   = tableRef.insertRow(tableRef.rows.length);
+            if(uList[idx].status == "In Progress"){
+              newRow.style.backgroundColor = "rgba(54, 162, 235, 0.2)";
+              newRow.style.textDecoration = "";
+            }
+            else if(uList[idx].status == "Fail"){
+              newRow.style.backgroundColor = "rgba(235, 0, 0, 0.5)";
+              newRow.style.textDecoration = "";
+            }
+            else if(uList[idx].status == "Completed"){
+              newRow.style.backgroundColor = "rgba(255, 206, 86, 0.5)";
+              newRow.style.textDecoration = "";
+            }
+            else if(uList[idx].status == "Initial"){
+              newRow.style.backgroundColor = "white";
+              newRow.style.textDecoration = "";
+            }
+            else if(uList[idx].status == "Picked Up"){
+              newRow.style.backgroundColor = "rgba(107, 107, 107, 0.5)";
+              newRow.style.textDecoration = "line-through";
+            }
+
+            for (var i = 0; i < 18; i++){
+                var newCell = newRow.insertCell(i);
+                var newText;
+                switch(i){
+                  case 0:
+                      newText = document.createTextNode(idx);
+                      break;
+                  case 1:
+                      newText = document.createElement('label');
+                      newText.className = "check_container";
+                      newInput = document.createElement('input');
+                      newInput.type="checkbox";
+                      if(uList[idx].status == "Picked Up"){
+                        newInput.checked="checked";
+                      }
+                      else{
+                        newInput.checked="";
+                      }
+                      newInput.className = "check_input";
+                      newSpan = document.createElement('checkmark');
+                      newSpan.className = "checkmark";
+                      newText.appendChild(newInput);
+                      newText.appendChild(newSpan);
+                      break;
+                  case 2:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-primary send";
+                      newText.id = "send_btn";
+                      newText.innerHTML = "Send";
+                      break;
+                  case 3:
+                      newText = document.createTextNode(uList[idx].fill_in_datetime);
+                      break;
+                  case 4:
+                      newText = document.createTextNode(uList[idx].applicant_email);
+                      break;
+                  case 5:
+                      newText = document.createTextNode(uList[idx].department);
+                      break;
+                  case 6:
+                      newText = document.createTextNode(uList[idx].requirement);
+                      break;
+                  case 7:
+                      newText = document.createTextNode(uList[idx].project_name);
+                      break;
+                  case 8:
+                      newText = document.createTextNode(uList[idx].phase);
+                      break;
+                  case 9:
+                      newText = document.createTextNode(uList[idx].bios_version);
+                      break;
+                  case 10:
+                      newText = document.createTextNode(uList[idx].os);
+                      break;
+                  case 11:
+                      newText = document.createTextNode(uList[idx].language);
+                      break;
+                  case 12:
+                      newText = document.createTextNode(uList[idx].issue);
+                      break;
+                  case 13:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-info in_progress";
+                      newText.id = "in_progress_btn";
+                      newText.innerHTML = "In Progress";
+                      break;
+                  case 14:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-danger fail";
+                      newText.id = "fail_btn";
+                      newText.innerHTML = "Fail";
+                      break;
+                  case 15:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-warning completed";
+                      newText.id = "completed_btn";
+                      newText.innerHTML = "Completed";
+                      break;
+                  case 16:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-success reset";
+                      newText.id = "reset_btn";
+                      newText.innerHTML = "Reset";
+                      break;
+                  case 17:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-basic finished";
+                      newText.id = "close_btn";
+                      newText.style ="background-color: black;color:white;"
+                      newText.innerHTML = "Close";
+                      break;
+                  default:
+                      break;
+                }
+                newCell.appendChild(newText);
+            }
+        
+        
+        }
+      }
+    }
+
+    function onclick_display_bios(){
+      var Table = document.getElementById('units_list');
+      var tableRows = Table.getElementsByTagName('tr');
+      var RowCounts = tableRows.length; 
+      console.log(RowCounts);
+      for (var x=RowCounts-1; x>0; x--){
+        Table.deleteRow(x)
+      }
+      for (var idx = 0; idx<uList.length; idx++){
+        if(uList[idx].requirement == "Update BIOS" & uList[idx].status != 'Close'){
+            var newRow   = tableRef.insertRow(tableRef.rows.length);
+            if(uList[idx].status == "In Progress"){
+              newRow.style.backgroundColor = "rgba(54, 162, 235, 0.2)";
+              newRow.style.textDecoration = "";
+            }
+            else if(uList[idx].status == "Fail"){
+              newRow.style.backgroundColor = "rgba(235, 0, 0, 0.5)";
+              newRow.style.textDecoration = "";
+            }
+            else if(uList[idx].status == "Completed"){
+              newRow.style.backgroundColor = "rgba(255, 206, 86, 0.5)";
+              newRow.style.textDecoration = "";
+            }
+            else if(uList[idx].status == "Initial"){
+              newRow.style.backgroundColor = "white";
+              newRow.style.textDecoration = "";
+            }
+            else if(uList[idx].status == "Picked Up"){
+              newRow.style.backgroundColor = "rgba(107, 107, 107, 0.5)";
+              newRow.style.textDecoration = "line-through";
+            }
+
+            for (var i = 0; i < 18; i++){
+                var newCell = newRow.insertCell(i);
+                var newText;
+                switch(i){
+                  case 0:
+                      newText = document.createTextNode(idx);
+                      break;
+                  case 1:
+                      newText = document.createElement('label');
+                      newText.className = "check_container";
+                      newInput = document.createElement('input');
+                      newInput.type="checkbox";
+                      if(uList[idx].status == "Picked Up"){
+                        newInput.checked="checked";
+                      }
+                      else{
+                        newInput.checked="";
+                      }
+                      newInput.className = "check_input";
+                      newSpan = document.createElement('checkmark');
+                      newSpan.className = "checkmark";
+                      newText.appendChild(newInput);
+                      newText.appendChild(newSpan);
+                      break;
+                  case 2:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-primary send";
+                      newText.id = "send_btn";
+                      newText.innerHTML = "Send";
+                      break;
+                  case 3:
+                      newText = document.createTextNode(uList[idx].fill_in_datetime);
+                      break;
+                  case 4:
+                      newText = document.createTextNode(uList[idx].applicant_email);
+                      break;
+                  case 5:
+                      newText = document.createTextNode(uList[idx].department);
+                      break;
+                  case 6:
+                      newText = document.createTextNode(uList[idx].requirement);
+                      break;
+                  case 7:
+                      newText = document.createTextNode(uList[idx].project_name);
+                      break;
+                  case 8:
+                      newText = document.createTextNode(uList[idx].phase);
+                      break;
+                  case 9:
+                      newText = document.createTextNode(uList[idx].bios_version);
+                      break;
+                  case 10:
+                      newText = document.createTextNode(uList[idx].os);
+                      break;
+                  case 11:
+                      newText = document.createTextNode(uList[idx].language);
+                      break;
+                  case 12:
+                      newText = document.createTextNode(uList[idx].issue);
+                      break;
+                  case 13:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-info in_progress";
+                      newText.id = "in_progress_btn";
+                      newText.innerHTML = "In Progress";
+                      break;
+                  case 14:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-danger fail";
+                      newText.id = "fail_btn";
+                      newText.innerHTML = "Fail";
+                      break;
+                  case 15:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-warning completed";
+                      newText.id = "completed_btn";
+                      newText.innerHTML = "Completed";
+                      break;
+                  case 16:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-success reset";
+                      newText.id = "reset_btn";
+                      newText.innerHTML = "Reset";
+                      break;
+                  case 17:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-basic finished";
+                      newText.id = "close_btn";
+                      newText.style ="background-color: black;color:white;"
+                      newText.innerHTML = "Close";
+                      break;
+                  default:
+                      break;
+                }
+                newCell.appendChild(newText);
+            }
+        }
+        
+      }
+    }
+
+
+    function onclick_display_dash(){
+      var Table = document.getElementById('units_list');
+      var tableRows = Table.getElementsByTagName('tr');
+      var RowCounts = tableRows.length; 
+      console.log(RowCounts);
+      for (var x=RowCounts-1; x>0; x--){
+        Table.deleteRow(x)
+      }
+      for (var idx = 0; idx<uList.length; idx++){
+        if(uList[idx].requirement == "Dash Image" & uList[idx].status != 'Close'){
+            var newRow   = tableRef.insertRow(tableRef.rows.length);
+            if(uList[idx].status == "In Progress"){
+              newRow.style.backgroundColor = "rgba(54, 162, 235, 0.2)";
+              newRow.style.textDecoration = "";
+            }
+            else if(uList[idx].status == "Fail"){
+              newRow.style.backgroundColor = "rgba(235, 0, 0, 0.5)";
+              newRow.style.textDecoration = "";
+            }
+            else if(uList[idx].status == "Completed"){
+              newRow.style.backgroundColor = "rgba(255, 206, 86, 0.5)";
+              newRow.style.textDecoration = "";
+            }
+            else if(uList[idx].status == "Initial"){
+              newRow.style.backgroundColor = "white";
+              newRow.style.textDecoration = "";
+            }
+            else if(uList[idx].status == "Picked Up"){
+              newRow.style.backgroundColor = "rgba(107, 107, 107, 0.5)";
+              newRow.style.textDecoration = "line-through";
+            }
+
+            for (var i = 0; i < 18; i++){
+                var newCell = newRow.insertCell(i);
+                var newText;
+                switch(i){
+                  case 0:
+                      newText = document.createTextNode(idx);
+                      break;
+                  case 1:
+                      newText = document.createElement('label');
+                      newText.className = "check_container";
+                      newInput = document.createElement('input');
+                      newInput.type="checkbox";
+                      if(uList[idx].status == "Picked Up"){
+                        newInput.checked="checked";
+                      }
+                      else{
+                        newInput.checked="";
+                      }
+                      newInput.className = "check_input";
+                      newSpan = document.createElement('checkmark');
+                      newSpan.className = "checkmark";
+                      newText.appendChild(newInput);
+                      newText.appendChild(newSpan);
+                      break;
+                  case 2:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-primary send";
+                      newText.id = "remove_btn";
+                      newText.innerHTML = "send";
+                      break;
+                  case 3:
+                      newText = document.createTextNode(uList[idx].fill_in_datetime);
+                      break;
+                  case 4:
+                      newText = document.createTextNode(uList[idx].applicant_email);
+                      break;
+                  case 5:
+                      newText = document.createTextNode(uList[idx].department);
+                      break;
+                  case 6:
+                      newText = document.createTextNode(uList[idx].requirement);
+                      break;
+                  case 7:
+                      newText = document.createTextNode(uList[idx].project_name);
+                      break;
+                  case 8:
+                      newText = document.createTextNode(uList[idx].phase);
+                      break;
+                  case 9:
+                      newText = document.createTextNode(uList[idx].bios_version);
+                      break;
+                  case 10:
+                      newText = document.createTextNode(uList[idx].os);
+                      break;
+                  case 11:
+                      newText = document.createTextNode(uList[idx].language);
+                      break;
+                  case 12:
+                      newText = document.createTextNode(uList[idx].issue);
+                      break;
+                  case 13:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-info in_progress";
+                      newText.id = "in_progress_btn";
+                      newText.innerHTML = "In Progress";
+                      break;
+                  case 14:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-danger fail";
+                      newText.id = "fail_btn";
+                      newText.innerHTML = "Fail";
+                      break;
+                  case 15:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-warning completed";
+                      newText.id = "completed_btn";
+                      newText.innerHTML = "Completed";
+                      break;
+                  case 16:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-success reset";
+                      newText.id = "reset_btn";
+                      newText.innerHTML = "Reset";
+                      break;
+                  case 17:
+                      newText = document.createElement('button');
+                      newText.className = "btn btn-basic finished";
+                      newText.id = "close_btn";
+                      newText.style ="background-color: black;color:white;"
+                      newText.innerHTML = "Close";
+                      break;
+                  default:
+                      break;
+                }
+                newCell.appendChild(newText);
+            }
+          }
+        
+      }
     }
   
-  
+function onclick_submit_download(){
+  $('#download_close').click();
+}
+
+
+
+
 </script>
 </html>
